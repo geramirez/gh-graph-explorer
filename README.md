@@ -141,12 +141,41 @@ MATCH (source)-[rel:PR_REVIEW_APPROVED]->(target)  WHERE rel.created_at > "2025-
 
 Create a user Projection 
 ```neo4j
-
 MATCH (u1:User)-[] -> (g:GitHubObject) <- []-(u2:User)
 WHERE u1.name < u2.name
 WITH u1, u2, collect(g.name) as gitobjects, count(g) as weight
 MERGE (u1)-[r:CONNECTED]->(u2)
 SET r.name = gitobjects, r.weight = weight
+```
+
+Create a user Projection with relationship type filtering
+```neo4j
+MATCH (u1:User)-[r1:PR_REVIEW_APPROVED|PR_REVIEW_COMMENTED]->(g:GitHubObject)<-[r2]-(u2:User)
+WHERE u1.name <> u2.name
+WITH u1, u2, collect(g.name) as gitobjects, count(g) as weight
+MERGE (u1)-[r:COLLABORATED]->(u2)
+SET r.projects = gitobjects, r.weight = weight
+```
+
+Create a user Projection with date filtering
+```neo4j
+MATCH (u1:User)-[r1]->(g:GitHubObject)<-[r2]-(u2:User)
+WHERE u1.name <> u2.name 
+  AND r1.created_at > "2023-01-01" AND r2.created_at > "2023-01-01"
+WITH u1, u2, collect(g.name) as gitobjects, count(g) as weight
+MERGE (u1)-[r:CONNECTED_RECENT]->(u2)
+SET r.projects = gitobjects, r.weight = weight
+```
+
+Create a focused projection for specific users
+```neo4j
+MATCH (u1:User)-[r1]->(g:GitHubObject)<-[r2]-(u2:User)
+WHERE u1.name IN ["user1", "user2", "user3"] 
+  AND u2.name IN ["user1", "user2", "user3"]
+  AND u1.name <> u2.name
+WITH u1, u2, collect(g.name) as gitobjects, count(g) as weight
+MERGE (u1)-[r:TEAM_COLLABORATION]->(u2)
+SET r.projects = gitobjects, r.weight = weight
 ```
 
 View the user projection
