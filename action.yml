@@ -52,7 +52,7 @@ runs:
       shell: bash
       run: |
         export GITHUB_TOKEN="${{ inputs.github_token }}"
-        COMMAND="python ${{ github.action_path }}/main.py collect --repos ${{ inputs.repos_file }} --days ${{ inputs.days }} --output csv --output-file ${{ inputs.output_file }}"
+        COMMAND="python ${{ github.action_path }}/main.py collect --repos ${{ inputs.repos_file }} --output csv --output-file ${{ inputs.output_file }}"
         if [ -n "${{ inputs.since_iso }}" ]; then
           COMMAND="$COMMAND --since-iso ${{ inputs.since_iso }}"
         fi

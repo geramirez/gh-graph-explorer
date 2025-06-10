@@ -223,17 +223,17 @@ class UserWorkFetcher:
             owner: Repository owner
             repo: Repository name
             since_iso: DateTime string in ISO format for filtering by date
-                      (if None, will default to 7 days ago)
+                      (if None, will default to 1 days ago)
             until_iso: DateTime string in ISO format for filtering by date
                       (if None, will default to now)
 
         Returns:
             The GraphQL query results as a dictionary
         """
-        # Calculate since_date if since_iso is not provided (default to 7 days ago)
+        # Calculate since_date if since_iso is not provided (default to 1 days ago)
         if since_iso is None:
             today = datetime.datetime.now(datetime.timezone.utc)
-            since_date = today - datetime.timedelta(days=7)
+            since_date = today - datetime.timedelta(days=1)
             since_iso = since_date.isoformat()
         else:
             # Parse the ISO string to a datetime object for building queries

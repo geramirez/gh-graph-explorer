@@ -118,7 +118,7 @@ uv run main.py collect --repos data/repos.json --since-iso 2025-05-01 --until-is
 uv run main.py collect --repos data/repos.json --since-iso 2025-05-01T00:00:00 --until-iso 2025-05-20T23:59:59 --output neo4j
 ```
 
-**Note**: The CLI uses `--since-iso` and `--until-iso` to specify the date range for data collection. Both parameters accept either `YYYY-MM-DD` or `YYYY-MM-DDTHH:MM:SS` formats. If not provided, the default is the last 7 days. The `--days` parameter is not supported in the CLI; use `--since-iso` and `--until-iso` for date control.
+**Note**: The CLI uses `--since-iso` and `--until-iso` to specify the date range for data collection. Both parameters accept either `YYYY-MM-DD` or `YYYY-MM-DDTHH:MM:SS` formats. If not provided, the default is the last 7 days.
 
 ### Analyzing Data (New Functionality)
 ```
@@ -168,7 +168,6 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           repos_file: 'repos.json'
-          days: '1'
           output_file: 'github_data.csv'
           commit_message: 'Update GitHub repository data [Skip CI]'
 ```
@@ -203,7 +202,6 @@ The GitHub Action accepts the following inputs:
 
 - `github_token`: GitHub token with read access to repos (required)
 - `repos_file`: Path to the JSON file containing repository information (default: `repos.json`)
-- `days`: Number of days to look back (default: `1`, used only if `since_iso` is not provided)
 - `since_iso`: Start date in ISO format (YYYY-MM-DD or YYYY-MM-DDTHH:MM:SS) (optional)
 - `until_iso`: End date in ISO format (YYYY-MM-DD or YYYY-MM-DDTHH:MM:SS) (optional)
 - `output_file`: Output file path for CSV (default: `github_data.csv`)

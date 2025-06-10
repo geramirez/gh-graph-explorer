@@ -21,7 +21,6 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           repos_file: 'repos.json'
-          days: '1'
           # Optional: Use specific date range instead of days
           # since_iso: '2025-05-01'
           # until_iso: '2025-05-20'

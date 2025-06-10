@@ -20,14 +20,14 @@ class Collector:
         Initialize the Collector with optional date range.
 
         Args:
-            since_iso: DateTime string in ISO format for start date filtering (optional, defaults to 7 days ago)
+            since_iso: DateTime string in ISO format for start date filtering (optional, defaults to 1 days ago)
             until_iso: DateTime string in ISO format for end date filtering (optional, defaults to now)
             save_strategy: Strategy to use for saving edges. If None, uses PrintSave by default.
         """
-        # Set default since_iso to 7 days ago if not provided
+        # Set default since_iso to 1 days ago if not provided
         if since_iso is None:
             today = datetime.datetime.now(datetime.timezone.utc)
-            since_date = today - datetime.timedelta(days=7)
+            since_date = today - datetime.timedelta(days=1)
             since_iso = since_date.isoformat()
 
         self.since_iso = since_iso
@@ -77,7 +77,6 @@ class Collector:
                     since_iso=self.since_iso,
                     until_iso=self.until_iso,
                 ).generate_edges():
-
 
                     self.save_strategy.save(edge)
 
