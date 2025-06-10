@@ -13,10 +13,6 @@ inputs:
     description: 'Path to the JSON file containing repository information'
     required: true
     default: 'repos.json'
-  days:
-    description: 'Number of days to look back (used only if since_iso is not provided)'
-    required: false
-    default: '1'
   since_iso:
     description: 'Start date in ISO format (YYYY-MM-DD or YYYY-MM-DDTHH:MM:SS)'
     required: false
