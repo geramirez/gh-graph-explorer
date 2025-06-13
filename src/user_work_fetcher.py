@@ -3,6 +3,7 @@ import os
 import datetime
 from gql import gql, Client
 from gql.transport.aiohttp import AIOHTTPTransport
+from dotenv import load_dotenv
 
 
 # Define the GraphQL query as a string
@@ -122,7 +123,7 @@ query getUserWork($username:String!, $issuesCreatedQuery:String!, $prsCreatedQue
 
 
 class UserWorkFetcher:
-    def __init__(self, github_token: str = None):
+    def __init__(self):
         """
         Initialize the UserWorkFetcher with a GitHub token.
 
@@ -130,12 +131,12 @@ class UserWorkFetcher:
             github_token: GitHub personal access token with appropriate permissions.
                           If None, will try to use GITHUB_TOKEN from environment variables.
         """
+        load_dotenv()
+        github_token = os.environ.get("GITHUB_TOKEN")
         if github_token is None:
-            github_token = os.environ.get("GITHUB_TOKEN")
-            if github_token is None:
-                raise ValueError(
-                    "GitHub token not provided and GITHUB_TOKEN environment variable not set"
-                )
+            raise ValueError(
+                "GitHub token not provided and GITHUB_TOKEN environment variable not set"
+            )
 
         # Set up the transport with the GitHub GraphQL API endpoint
         transport = AIOHTTPTransport(

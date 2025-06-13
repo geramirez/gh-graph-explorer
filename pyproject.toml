@@ -11,4 +11,5 @@ dependencies = [
     "neo4j>=5.18.0",
     "neo4j-driver",
     "networkx>=3.1.0",
+    "python-dotenv>=1.1.0",
 ]

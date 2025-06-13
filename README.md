@@ -89,16 +89,22 @@ This realization captures why social network analysis should be treated carefull
 
 ## Usage
 
-### Get Data
-1. pip install -r requirements.txt
-1. Collect the data
-    1. generate a github token with read permissions for repos + and set it in the GH_TOKEN env variable
-    1. edit + run `build_graph.py`
-
-### explore data
-1. jupyter lab
-1. load the csv file that was downloaded before
-
+### Dependencies
+- [uv](https://github.com/astral-sh/uv) - for packaging and running the project
+- [GitHub Personal Access Token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token) - with Discussions, Issues, Pull requests scopes for accessing data.
+- [docker](https://www.docker.com/) - for running the Neo4j database (optional, but recommended for Neo4j output)
+### Installation
+1. Python dependency installation 
+    ```bash
+    uv sync
+    ```
+2. Set up your GitHub Personal Access Token
+    - Create a `.env` file in the root directory of the project.
+    - Add your GitHub token to the `.env` file:
+      ```
+      GITHUB_TOKEN=your_github_token_here
+      ```
+3. 
 
 ### Collecting Data
 ```
