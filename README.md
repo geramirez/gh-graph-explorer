@@ -1,5 +1,22 @@
 # Beyond the Org Chart: Using Social Network Analysis to tend to Engineering Teams
 
+## Table of Contents
+
+| Section | Description |
+|---------|-------------|
+| [Cultivating Teams With Social Network Analysis](#cultivating-teams-with-social-network-analysis) | Introduction to SNA and its application |
+| [Methodology - How does it work?](#methodology---how-does-it-work) | Tools and workflow overview |
+| [Learnings](#learnings) | Key insights from SNA |
+| [Limits of Network Analysis](#limits-of-network-analysis) | Discussion of SNA limitations |
+| [Usage](#usage) | How to use the project |
+| [Dependencies](#dependencies) | Required tools and libraries |
+| [Installation](#installation) | Setup instructions |
+| [Collecting Data](#collecting-data) | Data collection commands |
+| [Analyzing Data](#analyzing-data-new-functionality) | Data analysis commands |
+| [Using the GitHub Action](#using-the-github-action) | Automating data collection |
+| [Setup with Claude Desktop](#setup-with-claude-desktop) | Example configuration |
+| [Useful queries](#useful-queries) | Example Neo4j queries |
+
 As managers, we constantly navigate a dialectical tension between two roles. On the one hand, we have a performance manager. We are asked to lift up high performers and draw clear lines on what we consider low performance. On the other hand, we play the role of cultivator, constantly distributing opportunities and risks while ensuring our teams collaborate and communications lines run smoothly. These roles aren't just different, they are in direct opposition.
 
 For this discussion, I would like to invite you to put aside the performance management lens for a moment and focus entirely on our role as team cultivator.
