@@ -170,6 +170,13 @@ If you want to customize the Neo4j query for analysis, you can also use the --ne
 uv run main.py analyze --source neo4j --neo4j-query "MATCH (source)-[rel]->(target)  WHERE rel.created_at > \"2025-04-01\" RETURN source.name AS source, target.url AS target, type(rel) AS type, properties(rel) AS properties" --neo4j-uri bolt://localhost:7687
 ```
 
+### Analyzing Data withu jupyter lab + CSVs
+```bash
+uv run jupyter lab
+```
+There is a template notebook available at `notebooks/graph-explorer-template.ipynb` that you can use to explore the data interactively.
+
+
 ### Using the GitHub Action
 
 You can use this tool as a GitHub Action in your own repositories. This will automatically collect GitHub repository data and commit the results to your repository.
