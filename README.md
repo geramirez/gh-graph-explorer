@@ -93,26 +93,37 @@ This realization captures why social network analysis should be treated carefull
 - [uv](https://github.com/astral-sh/uv) - for packaging and running the project
 - [GitHub Personal Access Token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token) - with Discussions, Issues, Pull requests scopes for accessing data.
 - [docker](https://www.docker.com/) - for running the Neo4j database (optional, but recommended for Neo4j output)
+
 ### Installation
-1. Python dependency installation 
-    ```bash
-    uv sync
-    ```
-2. Set up your GitHub Personal Access Token
+
+1. Set up your GitHub Personal Access Token
     - Create a `.env` file in the root directory of the project.
     - Add your GitHub token to the `.env` file:
       ```
       GITHUB_TOKEN=your_github_token_here
       ```
-3. 
+
+#### For Local UV/Python Setup
+1. Python dependency installation 
+    ```bash
+    uv sync
+    ```
+
+#### For Docker Setup 
+In case you don't have uv installed or prefer to run the project in a container, currently donesn't work with neo4j or jupyter
+1. docker build -f Dockerfile.local -t gh-graph-explorer-local .
+2. chmod +x ./run-local.sh 
+3. Run all the following commands with the ./run-local.sh for example `./run-local.sh collect ...`
+
 
 ### Collecting Data
+
 ```
 # Print output (default: last 7 days)
-uv run main.py collect --repos data/repos.json --since-iso 2025-05-29 --until-iso 2025-06-05 --output print
+uv run main.py collect --repos data/repos.json --output print
 
 # CSV output
-uv run main.py collect --repos data/repos.json --since-iso 2025-05-29 --until-iso 2025-06-05 --output csv --output-file github_data.csv
+uv run main.py collect --repos data/repos.json --output csv --output-file github_data.csv
 
 # Neo4j output
 uv run main.py collect --repos data/repos.json --since-iso 2025-05-22 --until-iso 2025-06-05 --output neo4j --neo4j-uri bolt://localhost:7687
@@ -124,7 +135,7 @@ uv run main.py collect --repos data/repos.json --since-iso 2025-05-01 --until-is
 uv run main.py collect --repos data/repos.json --since-iso 2025-05-01T00:00:00 --until-iso 2025-05-20T23:59:59 --output neo4j
 ```
 
-**Note**: The CLI uses `--since-iso` and `--until-iso` to specify the date range for data collection. Both parameters accept either `YYYY-MM-DD` or `YYYY-MM-DDTHH:MM:SS` formats. If not provided, the default is the last 7 days.
+**Note**: The CLI uses `--since-iso` and `--until-iso` to specify the date range for data collection. Both parameters accept either `YYYY-MM-DD` or `YYYY-MM-DDTHH:MM:SS` formats. If not provided, the default is the last day.
 
 ### Analyzing Data (New Functionality)
 ```
