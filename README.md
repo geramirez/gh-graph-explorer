@@ -244,6 +244,7 @@ The GitHub Action accepts the following inputs:
 > **Note:** For CLI usage, use `--since-iso` and `--until-iso` as shown above. The `days` parameter is only relevant for the GitHub Action workflow.
 
 ### Setup with Claude Desktop
+```json
 {
     "mcpServers": {
         "gh-graph-explorer": {
@@ -263,6 +264,7 @@ The GitHub Action accepts the following inputs:
         }
       }
 }
+```
 
 ### Useful queries 
 Filter by date
