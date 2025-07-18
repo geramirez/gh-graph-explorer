@@ -65,7 +65,7 @@ For example, I recently created a team of newer engineers who had not been solid
 
 
 ![network graph showing sparse connections](images/image8.png)
-![network graphs howing more robust connections](images/image7.png)
+![network graphs showing more robust connections](images/image7.png)
 
 When I started as a manager, I saw that I was constantly the central node. As the manager of my team, it's unavoidable. Initially, this made me feel like I was doing my job well. But I started to realize that it's actually a red flag. Sometimes, I have to be a central connecting node, but I also need to step back and allow other networks and connections to form. 
 
@@ -80,7 +80,7 @@ Sometimes, people can be isolated and have few to no connections to the main net
 The charts below only look at issue connections for 2 weeks in April and the second 2 weeks in May.   
 
 ![network graph showing isolated node](images/image3.png)
-![network graphs showing same nodde with more connections](images/image2.png)
+![network graphs showing same node with more connections](images/image2.png)
 
 
 Here are some common explanations for isolated nodes. 
@@ -127,7 +127,7 @@ This realization captures why social network analysis should be treated carefull
     ```
 
 #### For Docker Setup 
-In case you don't have uv installed or prefer to run the project in a container, currently donesn't work with neo4j or jupyter
+In case you don't have uv installed or prefer to run the project in a container, currently doesn't work with neo4j or jupyter
 1. docker build -f Dockerfile.local -t gh-graph-explorer-local .
 2. chmod +x ./run-local.sh 
 3. Run all the following commands with the ./run-local.sh for example `./run-local.sh collect ...`
@@ -170,7 +170,7 @@ If you want to customize the Neo4j query for analysis, you can also use the --ne
 uv run main.py analyze --source neo4j --neo4j-query "MATCH (source)-[rel]->(target)  WHERE rel.created_at > \"2025-04-01\" RETURN source.name AS source, target.url AS target, type(rel) AS type, properties(rel) AS properties" --neo4j-uri bolt://localhost:7687
 ```
 
-### Analyzing Data withu jupyter lab + CSVs
+### Analyzing Data with jupyter lab + CSVs
 ```bash
 uv run jupyter lab
 ```
