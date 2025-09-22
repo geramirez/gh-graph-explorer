@@ -74,7 +74,17 @@ class GraphAnalyzer:
         """
         if self.graph is None:
             return {"error": "No graph has been created yet. Call create() first."}
-        return [e for e in nx.generate_edgelist(self.graph)]
+        
+        edges = []
+        for source, target, edge_data in self.graph.edges(data=True):
+            edge = {
+                "source": {"name": source},
+                "target": {"name": target},
+                "type": edge_data.get("type", ""),
+                "properties": {k: v for k, v in edge_data.items() if k != "type"}
+            }
+            edges.append(edge)
+        return edges
 
     def analyze(self) -> Dict[str, Any]:
         """
@@ -164,7 +174,9 @@ class GraphAnalyzer:
         bottom_nodes = set(largest_component_graph) - top_nodes
 
         people_graph = bipartite.projected_graph(nx.Graph(largest_component_graph), bottom_nodes)
-        people_betweeness = nx.betweenness_centrality(people_graph, k=10, endpoints=True)
+        # Use min of 10 or number of nodes to avoid sampling error
+        k_value = min(10, people_graph.number_of_nodes()) if people_graph.number_of_nodes() > 0 else None
+        people_betweeness = nx.betweenness_centrality(people_graph, k=k_value, endpoints=True) if k_value else {}
 
         top_people_by_betweeness = [
             (n, c) for n, c in people_betweeness.items()

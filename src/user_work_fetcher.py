@@ -135,7 +135,12 @@ class UserWorkFetcher:
         github_token = os.environ.get("GITHUB_TOKEN")
         if github_token is None:
             raise ValueError(
-                "GitHub token not provided and GITHUB_TOKEN environment variable not set"
+                "GitHub token not provided. Please set the GITHUB_TOKEN environment variable with a valid GitHub Personal Access Token.\n"
+                "To create a token:\n"
+                "1. Go to https://github.com/settings/tokens\n"
+                "2. Click 'Generate new token (classic)'\n"
+                "3. Select scopes: 'repo', 'read:user'\n"
+                "4. Set GITHUB_TOKEN environment variable: export GITHUB_TOKEN=your_token_here"
             )
 
         # Set up the transport with the GitHub GraphQL API endpoint

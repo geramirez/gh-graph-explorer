@@ -132,6 +132,26 @@ In case you don't have uv installed or prefer to run the project in a container,
 2. chmod +x ./run-local.sh 
 3. Run all the following commands with the ./run-local.sh for example `./run-local.sh collect ...`
 
+### Quick Start
+
+**Want to try the tool without setting up GitHub credentials?** You can test the analysis features with the included sample data:
+
+```bash
+# Analyze sample data
+uv run main.py analyze --source csv --file examples/sample_data.csv
+
+# Get edges from sample data (print format)
+uv run main.py get-edges --source csv --file examples/sample_data.csv
+
+# Export edges to CSV
+uv run main.py get-edges --source csv --file examples/sample_data.csv --output csv --output-file my_edges.csv
+
+# Export edges to JSON
+uv run main.py get-edges --source csv --file examples/sample_data.csv --output json --output-file my_edges.json
+```
+
+**To collect your own GitHub data**, you'll need to set up a GitHub token first (see Installation section above), then:
+
 
 ### Collecting Data
 
