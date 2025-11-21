@@ -37,36 +37,36 @@ class Collector:
 
     async def get(self, repos: List[Dict[str, str]]) -> Dict[str, Any]:
         """
-        Collect GitHub work data from multiple repositories.
+        Collect GitHub work data for users, optionally scoped to organizations.
 
         Args:
-            repos: List of dictionaries, each containing 'username', 'owner', and 'repo' keys
+            repos: List of dictionaries, each containing 'username' and optionally 'org' keys.
+                   If 'org' is not provided, performs a global search for the user.
 
         Returns:
-            Dictionary with repository identifiers as keys and fetched data as values
+            Dictionary with identifiers as keys and fetched data as values
         """
         if not repos:
-            raise ValueError("No repositories provided")
+            raise ValueError("No user configurations provided")
 
         results = {}
 
-        # Process each repository
+        # Process each user configuration
         for repo_info in repos:
             # Validate required keys
-            required_keys = ["username", "owner", "repo"]
+            required_keys = ["username"]
             if not all(key in repo_info for key in required_keys):
                 missing = [key for key in required_keys if key not in repo_info]
-                raise ValueError(f"Missing required keys in repository info: {missing}")
+                raise ValueError(f"Missing required keys in user configuration: {missing}")
 
-            # Create a unique identifier for this repository
-            repo_id = f"{repo_info['owner']}/{repo_info['repo']}"
+            # Create a unique identifier (use org if provided, otherwise global-username)
+            org_id = repo_info.get('org', f"global-{repo_info['username']}")
 
-            # Fetch data for this repository
+            # Fetch data for this user configuration
             try:
                 result = await self.fetcher.get(
                     username=repo_info["username"],
-                    owner=repo_info["owner"],
-                    repo=repo_info["repo"],
+                    org=repo_info.get("org"),
                     since_iso=self.since_iso,
                     until_iso=self.until_iso,
                 )
@@ -80,11 +80,11 @@ class Collector:
 
                     self.save_strategy.save(edge)
 
-                results[repo_id] = {"success": True}
+                results[org_id] = {"success": True}
 
             except Exception as e:
-                # Store the error for this repository but continue with others
-                results[repo_id] = {"error": str(e)}
+                # Store the error for this user configuration but continue with others
+                results[org_id] = {"error": str(e)}
 
         # Finalize the save strategy (e.g., close files)
         self.save_strategy.finalize()

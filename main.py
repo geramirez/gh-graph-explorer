@@ -150,13 +150,14 @@ def parse_arguments():
 
 def parse_repos_config(repos_config: str) -> List[Dict[str, str]]:
     """
-    Parse the repositories configuration from JSON string or file
+    Parse the organizations configuration from JSON string or file
 
     Args:
-        repos_config: JSON string or path to JSON file with repositories information
+        repos_config: JSON string or path to JSON file with organizations information
 
     Returns:
-        List of repository configurations with username, owner, and repo keys
+        List of organization configurations with username and optionally org keys.
+        If org is not provided, a global search will be performed for the user.
     """
     repos = []
 
@@ -173,12 +174,12 @@ def parse_repos_config(repos_config: str) -> List[Dict[str, str]]:
 
     # Validate the format
     if not isinstance(repos, list):
-        raise ValueError("Repositories configuration must be a list")
+        raise ValueError("Organizations configuration must be a list")
 
     for repo in repos:
-        if not all(k in repo for k in ["username", "owner", "repo"]):
+        if "username" not in repo:
             raise ValueError(
-                f"Each repository must have username, owner, and repo keys: {repo}"
+                f"Each entry must have a username key: {repo}"
             )
 
     return repos
