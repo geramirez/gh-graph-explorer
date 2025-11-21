@@ -59,6 +59,9 @@ class BipartiteCollapser:
             resource_node = target_node if target_node.startswith("https://") else source_node
             user_node = source_node if not source_node.startswith("https://") else target_node
 
+            resource_node.to_lower = resource_node.lower()
+            user_node.to_lower = user_node.lower()
+
             for neighbor in self.graph.neighbors(resource_node):
                 if neighbor != user_node:
                     # Add edge between user_node and neighbor with edge_data
