@@ -120,10 +120,16 @@ This realization captures why social network analysis should be treated carefull
       GITHUB_TOKEN=your_github_token_here
       ```
 
+
+
 #### For Local UV/Python Setup
+
 1. Python dependency installation 
+
     ```bash
+
     uv sync
+
     ```
 
 #### For Docker Setup 
@@ -142,7 +148,9 @@ uv run main.py collect --orgs data/orgs.json --output print
 # CSV output
 uv run main.py collect --orgs data/orgs.json --output csv --output-file github_data.csv
 
+
 # Neo4j output
+
 uv run main.py collect --orgs data/orgs.json --since-iso 2025-05-22 --until-iso 2025-06-05 --output neo4j --neo4j-uri bolt://localhost:7687
 
 # Using specific date ranges (recommended for precise control)
@@ -151,6 +159,8 @@ uv run main.py collect --orgs data/orgs.json --since-iso 2025-05-01 --until-iso 
 # Using full ISO datetime format
 uv run main.py collect --orgs data/orgs.json --since-iso 2025-05-01T00:00:00 --until-iso 2025-05-20T23:59:59 --output neo4j
 ```
+
+
 
 **Note**: The CLI uses `--since-iso` and `--until-iso` to specify the date range for data collection. Both parameters accept either `YYYY-MM-DD` or `YYYY-MM-DDTHH:MM:SS` formats. If not provided, the default is the last day.
 
@@ -290,3 +300,64 @@ View the user projection
 ```neo4j
 MATCH p = (u1:User)-[]-(u2:User) Return p limit 200
 ```
+
+### Bipartite Graph Collapse Transformation
+
+The `BipartiteCollapser` class in [`src/transformations/bipartite_collapser.py`](src/transformations/bipartite_collapser.py) provides functionality to transform bipartite graphs by collapsing one set of nodes and creating direct connections between the other set.
+
+#### Usage
+
+1. **Initialize with a Loader strategy**  
+   The collapser requires a loader implementing the `Loader` abstract class (see [`src/load_strategies/base.py`](src/load_strategies/base.py)).
+
+   ```python
+   from src.transformations.bipartite_collapser import BipartiteCollapser
+   from src.load_strategies.csv_loader import CSVLoader
+
+   loader = CSVLoader('path/to/input.csv')
+   collapser = BipartiteCollapser(loader)
+   ```
+
+2. **Run the transformation pipeline**  
+   Use the `run` method to load, transform, and save the collapsed graph edges to a CSV file.
+
+   ```python
+   collapser.run('path/to/output.csv')
+   ```
+
+   This will:
+   - Load the bipartite graph using the loader
+   - Collapse resource nodes, connecting users directly
+   - Save the resulting edges to the specified CSV file
+
+#### Command-Line Example
+
+You can also use the transformation in a script:
+
+```python
+from src.transformations.bipartite_collapser import BipartiteCollapser
+from src.load_strategies.csv_loader import CSVLoader
+
+if __name__ == "__main__":
+    loader = CSVLoader("github_bipartite_collapse.csv")
+    collapser = BipartiteCollapser(loader)
+    collapser.run("collapsed_edges.csv")
+```
+
+#### Output Format
+
+The output CSV will contain the following columns:
+
+- `source`: Source node (user)
+- `target`: Target node (user)
+- `type`: Edge type
+- `title`: Resource title
+- `created_at`: Creation date
+- `url`: Resource URL
+
+#### Notes
+
+- Ensure your loader is compatible with the expected graph format.
+- The transformation assumes resource nodes are identified by URLs (starting with `https://`).
+
+For more details, see the source code in [`src/transformations/bipartite_collapser.py`](src/transformations/bipartite_collapser.py).
