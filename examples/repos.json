@@ -1,17 +1,14 @@
 [
   {
     "username": "dependabot",
-    "owner": "octocat",
-    "repo": "Hello-World"
+    "org": "github"
   },
   {
     "username": "user1",
-    "owner": "organization1",
-    "repo": "repo-name-1"
+    "org": "organization1"
   },
   {
     "username": "user2",
-    "owner": "organization2",
-    "repo": "repo-name-2"
+    "org": "organization2"
   }
 ]

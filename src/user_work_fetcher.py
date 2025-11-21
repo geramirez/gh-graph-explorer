@@ -211,18 +211,17 @@ class UserWorkFetcher:
     async def get(
         self,
         username: str,
-        owner: str,
-        repo: str,
+        org: str,
         since_iso: str = None,
         until_iso: str = None,
     ) -> dict:
         """
-        Simplified method to get user's GitHub work data.
+        Simplified method to get user's GitHub work data scoped to an organization.
 
         Args:
             username: GitHub username
-            owner: Repository owner
-            repo: Repository name
+            org: Organization name to scope the search to. If None, performs a global search
+                 across all accessible repositories.
             since_iso: DateTime string in ISO format for filtering by date
                       (if None, will default to 1 days ago)
             until_iso: DateTime string in ISO format for filtering by date
@@ -252,29 +251,32 @@ class UserWorkFetcher:
                 until_iso.replace("Z", "+00:00")
             )
 
-        # Build all query strings
-        name_with_owner_query = f"repo:{owner}/{repo} "
-        prs_created_query = name_with_owner_query + self._build_prs_created_query(
+        # Build all query strings with organization scope
+        # Use org-based prefix for scoping (empty string if org is None for global search)
+        # Future enhancement: Support multiple orgs with OR grouping, e.g., "(org:foo OR org:bar) "
+        scope_prefix = f"org:{org} " if org else ""
+        
+        prs_created_query = scope_prefix + self._build_prs_created_query(
             username, since_date, until_date
         )
 
-        issues_created_query = name_with_owner_query + self._build_issues_created_query(
+        issues_created_query = scope_prefix + self._build_issues_created_query(
             username, since_date, until_date
         )
 
         pr_contributions_query = (
-            name_with_owner_query
+            scope_prefix
             + self._build_pr_contributions_query(username, since_date, until_date)
         )
-        issue_comments_query = name_with_owner_query + self._build_issue_comments_query(
+        issue_comments_query = scope_prefix + self._build_issue_comments_query(
             username, since_date, until_date
         )
         discussions_created_query = (
-            name_with_owner_query
+            scope_prefix
             + self._build_discussions_created_query(username, since_date, until_date)
         )
         discussions_involved_query = (
-            name_with_owner_query
+            scope_prefix
             + self._build_discussions_involved_query(username, since_date, until_date)
         )
 
@@ -304,8 +306,6 @@ class UserWorkFetcher:
 
         Args:
             username: GitHub username
-            repo: Repository name
-            since_iso: DateTime string in ISO format for filtering by date
             issues_created_query: Search query for issues created by user
             prs_created_query: Search query for PRs created by user
             pr_contributions_query: Search query for PRs the user contributed to
