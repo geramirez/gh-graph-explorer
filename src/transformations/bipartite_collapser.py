@@ -51,7 +51,7 @@ class BipartiteCollapser:
             raise ValueError("No graph has been created yet. Call create() first.")
         
         # Create a new empty graph
-        self.transformed_graph = nx.MultiGraph()
+        self.transformed_graph = nx.Graph()
         
         # Copy edges row by row from the original graph to the new graph
         for source_node, target_node, edge_data in self.graph.edges(data=True):
