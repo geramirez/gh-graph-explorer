@@ -40,7 +40,8 @@ class Collector:
         Collect GitHub work data from multiple organizations.
 
         Args:
-            repos: List of dictionaries, each containing 'username' and 'org' keys
+            repos: List of dictionaries, each containing 'username' and optionally 'org' keys.
+                   If 'org' is not provided, performs a global search for the user.
 
         Returns:
             Dictionary with organization identifiers as keys and fetched data as values
@@ -53,19 +54,19 @@ class Collector:
         # Process each organization
         for repo_info in repos:
             # Validate required keys
-            required_keys = ["username", "org"]
+            required_keys = ["username"]
             if not all(key in repo_info for key in required_keys):
                 missing = [key for key in required_keys if key not in repo_info]
                 raise ValueError(f"Missing required keys in organization info: {missing}")
 
-            # Create a unique identifier for this organization
-            org_id = repo_info['org']
+            # Create a unique identifier for this organization (use username if org not provided)
+            org_id = repo_info.get('org', f"global-{repo_info['username']}")
 
             # Fetch data for this organization
             try:
                 result = await self.fetcher.get(
                     username=repo_info["username"],
-                    org=repo_info["org"],
+                    org=repo_info.get("org"),
                     since_iso=self.since_iso,
                     until_iso=self.until_iso,
                 )

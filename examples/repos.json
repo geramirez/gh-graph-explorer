@@ -10,5 +10,8 @@
   {
     "username": "user2",
     "org": "organization2"
+  },
+  {
+    "username": "global-user"
   }
 ]

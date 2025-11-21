@@ -156,7 +156,8 @@ def parse_repos_config(repos_config: str) -> List[Dict[str, str]]:
         repos_config: JSON string or path to JSON file with organizations information
 
     Returns:
-        List of organization configurations with username and org keys
+        List of organization configurations with username and optionally org keys.
+        If org is not provided, a global search will be performed for the user.
     """
     repos = []
 
@@ -176,9 +177,9 @@ def parse_repos_config(repos_config: str) -> List[Dict[str, str]]:
         raise ValueError("Organizations configuration must be a list")
 
     for repo in repos:
-        if not all(k in repo for k in ["username", "org"]):
+        if "username" not in repo:
             raise ValueError(
-                f"Each entry must have username and org keys: {repo}"
+                f"Each entry must have a username key: {repo}"
             )
 
     return repos

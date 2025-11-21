@@ -211,9 +211,9 @@ class UserWorkFetcher:
     async def get(
         self,
         username: str,
-        org: str,
-        since_iso: str = None,
-        until_iso: str = None,
+        org: Optional[str] = None,
+        since_iso: Optional[str] = None,
+        until_iso: Optional[str] = None,
     ) -> dict:
         """
         Simplified method to get user's GitHub work data scoped to an organization.
