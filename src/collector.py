@@ -7,7 +7,7 @@ from .save_strategies import SaveStrategy, PrintSave
 
 class Collector:
     """
-    Class to collect GitHub work data from multiple repositories for a user.
+    Class to collect GitHub work data from multiple organizations for a user.
     """
 
     def __init__(
@@ -35,45 +35,45 @@ class Collector:
         self.fetcher = UserWorkFetcher()
         self.save_strategy = save_strategy if save_strategy else PrintSave()
 
-    async def get(self, repos: List[Dict[str, str]]) -> Dict[str, Any]:
+    async def get(self, orgs: List[Dict[str, str]]) -> Dict[str, Any]:
         """
         Collect GitHub work data for users, optionally scoped to organizations.
 
         Args:
-            repos: List of dictionaries, each containing 'username' and optionally 'org' keys.
+            orgs: List of dictionaries, each containing 'username' and optionally 'org' keys.
                    If 'org' is not provided, performs a global search for the user.
 
         Returns:
             Dictionary with identifiers as keys and fetched data as values
         """
-        if not repos:
+        if not orgs:
             raise ValueError("No user configurations provided")
 
         results = {}
 
         # Process each user configuration
-        for repo_info in repos:
+        for org_info in orgs:
             # Validate required keys
             required_keys = ["username"]
-            if not all(key in repo_info for key in required_keys):
-                missing = [key for key in required_keys if key not in repo_info]
+            if not all(key in org_info for key in required_keys):
+                missing = [key for key in required_keys if key not in org_info]
                 raise ValueError(f"Missing required keys in user configuration: {missing}")
 
             # Create a unique identifier (use org if provided, otherwise global-username)
-            org_id = repo_info.get('org', f"global-{repo_info['username']}")
+            org_id = org_info.get('org', f"global-{org_info['username']}")
 
             # Fetch data for this user configuration
             try:
                 result = await self.fetcher.get(
-                    username=repo_info["username"],
-                    org=repo_info.get("org"),
+                    username=org_info["username"],
+                    org=org_info.get("org"),
                     since_iso=self.since_iso,
                     until_iso=self.until_iso,
                 )
 
                 for edge in EdgeFactory(
                     data=result,
-                    username=repo_info["username"],
+                    username=org_info["username"],
                     since_iso=self.since_iso,
                     until_iso=self.until_iso,
                 ).generate_edges():

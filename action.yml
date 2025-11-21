@@ -1,5 +1,5 @@
 name: 'GitHub Graph Data Collector'
-description: 'Collects GitHub repository data and saves it to a CSV file'
+description: 'Collects GitHub organization data and saves it to a CSV file'
 author: 'Gabriel Ramirez'
 branding:
   icon: 'git-branch'
@@ -7,12 +7,12 @@ branding:
 
 inputs:
   github_token:
-    description: 'GitHub token with read access to repos'
+    description: 'GitHub token with read access to orgs'
     required: true
-  repos_file:
-    description: 'Path to the JSON file containing repository information'
+  orgs_file:
+    description: 'Path to the JSON file containing organization information'
     required: true
-    default: 'repos.json'
+    default: 'orgs.json'
   since_iso:
     description: 'Start date in ISO format (YYYY-MM-DD or YYYY-MM-DDTHH:MM:SS)'
     required: false
@@ -26,7 +26,7 @@ inputs:
   commit_message:
     description: 'Commit message for the CSV file update'
     required: false
-    default: 'Update GitHub repository data'
+    default: 'Update GitHub organization data'
 
 runs:
   using: 'composite'
@@ -52,7 +52,7 @@ runs:
       shell: bash
       run: |
         export GITHUB_TOKEN="${{ inputs.github_token }}"
-        COMMAND="python ${{ github.action_path }}/main.py collect --repos ${{ inputs.repos_file }} --output csv --output-file ${{ inputs.output_file }}"
+        COMMAND="python ${{ github.action_path }}/main.py collect --orgs ${{ inputs.orgs_file }} --output csv --output-file ${{ inputs.output_file }}"
         if [ -n "${{ inputs.since_iso }}" ]; then
           COMMAND="$COMMAND --since-iso ${{ inputs.since_iso }}"
         fi

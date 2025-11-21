@@ -1,6 +1,6 @@
 # Examples
 
-## repos.json
+## orgs.json
 
 This file contains example configurations for collecting GitHub user work data.
 

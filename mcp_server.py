@@ -82,27 +82,25 @@ def _validate_relationship_types(relationship_types):
 @mcp.tool("collect")
 async def collect(
     user: str,
-    owner: str,
-    repo: str,
+    org: str,
     since_iso: Optional[str] = None,
     until_iso: Optional[str] = None,
 ) -> dict:
     """
-    Collect GitHub data for specified users, repositories and time period.
+    Collect GitHub data for specified users, organizations and time period.
 
     Request parameters:
         - user: GitHub username (required)
-        - owner: Repository owner (required)
-        - repo: Repository name (required)
+        - org: GitHub organization (required)
         - since_iso: Start date in ISO format (optional, defaults to 7 days ago)
         - until_iso: End date in ISO format (optional, defaults to now)
     """
     # Validate required parameters
-    if not all([user, owner, repo]):
+    if not all([user, org]):
         return {}
 
-    # Create the repos config
-    repos_config = [{"username": user, "owner": owner, "repo": repo}]
+    # Create the orgs config
+    orgs_config = [{"username": user, "org": org}]
 
     uri, username, password = _get_neo4j_credentials()
 
@@ -117,10 +115,10 @@ async def collect(
     )
 
     # Collect data
-    results = await collector.get(repos_config)
+    results = await collector.get(orgs_config)
 
     return {
-        "message": f"Successfully processed repository {owner}/{repo} for user {user}",
+        "message": f"Successfully processed organization {org} for user {user}",
         "results": results,
     }
 
