@@ -31,10 +31,10 @@ def parse_arguments():
         help="End date in ISO format (YYYY-MM-DD or YYYY-MM-DDTHH:MM:SS)",
     )
     collect_parser.add_argument(
-        "--repos",
+        "--orgs",
         type=str,
         required=True,
-        help="JSON string or file path with repositories information",
+        help="JSON string or file path with organizations information",
     )
     collect_parser.add_argument(
         "--output",
@@ -148,49 +148,49 @@ def parse_arguments():
     return parser.parse_args()
 
 
-def parse_repos_config(repos_config: str) -> List[Dict[str, str]]:
+def parse_orgs_config(orgs_config: str) -> List[Dict[str, str]]:
     """
     Parse the organizations configuration from JSON string or file
 
     Args:
-        repos_config: JSON string or path to JSON file with organizations information
+        orgs_config: JSON string or path to JSON file with organizations information
 
     Returns:
         List of organization configurations with username and optionally org keys.
         If org is not provided, a global search will be performed for the user.
     """
-    repos = []
+    orgs = []
 
     # Check if the input is a file path
-    if os.path.isfile(repos_config):
-        with open(repos_config, "r") as f:
-            repos = json.load(f)
+    if os.path.isfile(orgs_config):
+        with open(orgs_config, "r") as f:
+            orgs = json.load(f)
     else:
         # Try to parse as a JSON string
         try:
-            repos = json.loads(repos_config)
+            orgs = json.loads(orgs_config)
         except json.JSONDecodeError:
-            raise ValueError(f"Invalid JSON format: {repos_config}")
+            raise ValueError(f"Invalid JSON format: {orgs_config}")
 
     # Validate the format
-    if not isinstance(repos, list):
+    if not isinstance(orgs, list):
         raise ValueError("Organizations configuration must be a list")
 
-    for repo in repos:
-        if "username" not in repo:
+    for org in orgs:
+        if "username" not in org:
             raise ValueError(
-                f"Each entry must have a username key: {repo}"
+                f"Each entry must have a username key: {org}"
             )
 
-    return repos
+    return orgs
 
 
 async def collect_data(args):
     """
     Function for collecting GitHub data
     """
-    # Parse repositories configuration
-    repos = parse_repos_config(args.repos)
+    # Parse organizations configuration
+    orgs = parse_orgs_config(args.orgs)
 
     # Create save strategy based on arguments
     if args.output == "csv":
@@ -210,16 +210,16 @@ async def collect_data(args):
     )
 
     # Collect data
-    results = await collector.get(repos)
+    results = await collector.get(orgs)
 
-    print(f"Processed {len(results)} repositories")
+    print(f"Processed {len(results)} organization")
 
     # Print any errors
-    errors = {repo: data["error"] for repo, data in results.items() if "error" in data}
+    errors = {org: data["error"] for org, data in results.items() if "error" in data}
     if errors:
-        print(f"Encountered errors in {len(errors)} repositories:")
-        for repo, error in errors.items():
-            print(f"  {repo}: {error}")
+        print(f"Encountered errors in {len(errors)} organization:")
+        for org, error in errors.items():
+            print(f"  {org}: {error}")
 
 
 def analyze_data(args):

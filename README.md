@@ -137,19 +137,19 @@ In case you don't have uv installed or prefer to run the project in a container,
 
 ```
 # Print output (default: last 7 days)
-uv run main.py collect --repos data/repos.json --output print
+uv run main.py collect --orgs data/orgs.json --output print
 
 # CSV output
-uv run main.py collect --repos data/repos.json --output csv --output-file github_data.csv
+uv run main.py collect --orgs data/orgs.json --output csv --output-file github_data.csv
 
 # Neo4j output
-uv run main.py collect --repos data/repos.json --since-iso 2025-05-22 --until-iso 2025-06-05 --output neo4j --neo4j-uri bolt://localhost:7687
+uv run main.py collect --orgs data/orgs.json --since-iso 2025-05-22 --until-iso 2025-06-05 --output neo4j --neo4j-uri bolt://localhost:7687
 
 # Using specific date ranges (recommended for precise control)
-uv run main.py collect --repos data/repos.json --since-iso 2025-05-01 --until-iso 2025-05-20 --output csv --output-file github_data.csv
+uv run main.py collect --orgs data/orgs.json --since-iso 2025-05-01 --until-iso 2025-05-20 --output csv --output-file github_data.csv
 
 # Using full ISO datetime format
-uv run main.py collect --repos data/repos.json --since-iso 2025-05-01T00:00:00 --until-iso 2025-05-20T23:59:59 --output neo4j
+uv run main.py collect --orgs data/orgs.json --since-iso 2025-05-01T00:00:00 --until-iso 2025-05-20T23:59:59 --output neo4j
 ```
 
 **Note**: The CLI uses `--since-iso` and `--until-iso` to specify the date range for data collection. Both parameters accept either `YYYY-MM-DD` or `YYYY-MM-DDTHH:MM:SS` formats. If not provided, the default is the last day.
@@ -208,31 +208,28 @@ jobs:
         uses: yourusername/gh-graph-explore@v1
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          repos_file: 'repos.json'
+          orgs_file: 'orgs.json'
           output_file: 'github_data.csv'
-          commit_message: 'Update GitHub repository data [Skip CI]'
+          commit_message: 'Update GitHub organization data [Skip CI]'
 ```
 
-#### Creating a repos.json file
+#### Creating an orgs.json file
 
-Create a `repos.json` file in the root of your repository with the following structure:
+Create an `orgs.json` file in the root of your repository with the following structure:
 
 ```json
 [
   {
     "username": "dependabot",
-    "owner": "octocat",
-    "repo": "Hello-World"
+    "org": "octocat"
   },
   {
     "username": "user1",
-    "owner": "organization1",
-    "repo": "repo-name-1"
+    "org": "organization1"
   },
   {
     "username": "user2",
-    "owner": "organization2",
-    "repo": "repo-name-2"
+    "org": "organization2"
   }
 ]
 ```
@@ -241,8 +238,8 @@ Create a `repos.json` file in the root of your repository with the following str
 
 The GitHub Action accepts the following inputs:
 
-- `github_token`: GitHub token with read access to repos (required)
-- `repos_file`: Path to the JSON file containing repository information (default: `repos.json`)
+- `github_token`: GitHub token with read access to orgs (required)
+- `orgs_file`: Path to the JSON file containing organization information (default: `orgs.json`)
 - `since_iso`: Start date in ISO format (YYYY-MM-DD or YYYY-MM-DDTHH:MM:SS) (optional)
 - `until_iso`: End date in ISO format (YYYY-MM-DD or YYYY-MM-DDTHH:MM:SS) (optional)
 - `output_file`: Output file path for CSV (default: `github_data.csv`)

@@ -20,9 +20,9 @@ jobs:
         uses: yourusername/gh-graph-explore@v1
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          repos_file: 'repos.json'
+          orgs_file: 'orgs.json'
           # Optional: Use specific date range instead of days
           # since_iso: '2025-05-01'
           # until_iso: '2025-05-20'
           output_file: 'github_data.csv'
-          commit_message: 'Update GitHub repository data [Skip CI]'
+          commit_message: 'Update GitHub organization data [Skip CI]'
