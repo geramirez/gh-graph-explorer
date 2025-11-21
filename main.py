@@ -7,6 +7,7 @@ from src.collector import Collector
 from src.save_strategies import PrintSave, CSVSave, Neo4jSave
 from src.graph_analyzer import GraphAnalyzer
 from src.load_strategies import CSVLoader, Neo4jLoader
+from src.transformations.bipartite_collapser import BipartiteCollapser
 
 
 def parse_arguments():
@@ -143,6 +144,38 @@ def parse_arguments():
     )
     edges_parser.add_argument(
         "--output-file", type=str, help="Output file path for CSV or JSON output"
+    )
+
+    # Transform mode parser
+    transform_parser = subparsers.add_parser(
+        "transform", help="Transform GitHub data graph"
+    )
+    transform_subparsers = transform_parser.add_subparsers(
+        dest="transform_type", help="Type of transformation"
+    )
+    
+    # Bipartite collapse transformation
+    bipartite_parser = transform_subparsers.add_parser(
+        "bipartite_collapse", help="Collapse bipartite graph"
+    )
+    bipartite_parser.add_argument(
+        "--source",
+        type=str,
+        choices=["csv"],
+        required=True,
+        help="Data source for transformation (currently only csv supported)",
+    )
+    bipartite_parser.add_argument(
+        "--file",
+        type=str,
+        required=True,
+        help="Input CSV file path",
+    )
+    bipartite_parser.add_argument(
+        "--output-file",
+        type=str,
+        required=True,
+        help="Output CSV file path",
     )
 
     return parser.parse_args()
@@ -312,6 +345,24 @@ def get_edges(args):
             print("---")
 
 
+def transform_data(args):
+    """
+    Function for transforming GitHub data graph
+    """
+    if args.transform_type == "bipartite_collapse":
+        if args.source != "csv":
+            raise ValueError("Currently only CSV source is supported for bipartite collapse")
+        
+        # Create loader based on source
+        loader = CSVLoader(filepath=args.file)
+        
+        # Create collapser with loader and run transformation
+        collapser = BipartiteCollapser(load_strategy=loader)
+        collapser.run(output_file=args.output_file)
+    else:
+        raise ValueError(f"Unknown transformation type: {args.transform_type}")
+
+
 async def main():
     """
     Main function for the GitHub graph explorer
@@ -324,8 +375,10 @@ async def main():
         analyze_data(args)
     elif args.mode == "get-edges":
         get_edges(args)
+    elif args.mode == "transform":
+        transform_data(args)
     else:
-        print("No mode specified. Use 'collect', 'analyze', or 'get-edges'")
+        print("No mode specified. Use 'collect', 'analyze', 'get-edges', or 'transform'")
         return 1
 
     return 0
