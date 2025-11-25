@@ -51,7 +51,7 @@ class BipartiteCollapser:
             raise ValueError("No graph has been created yet. Call create() first.")
         
         # Create a new empty graph
-        self.transformed_graph = nx.Graph()
+        self.transformed_graph = nx.MultiGraph()
         
         # Copy edges row by row from the original graph to the new graph
         for source_node, target_node, edge_data in self.graph.edges(data=True):
@@ -64,16 +64,11 @@ class BipartiteCollapser:
 
             for neighbor in self.graph.neighbors(resource_node):
                 if neighbor != user_node:
-                    if self.transformed_graph.has_node(neighbor) and self.transformed_graph.has_node(user_node) and self.transformed_graph.has_edge(user_node, neighbor):
-                        self.transformed_graph[user_node][neighbor]['weight'] += 1
-                    else:
-                        edge_data['weight'] = 1
-                        self.transformed_graph.add_edge(
-                            user_node,
-                            neighbor,
-                            **edge_data
-                        )
-
+                    self.transformed_graph.add_edge(
+                        user_node,
+                        neighbor,
+                        **edge_data
+                    )
 
         return self
     
