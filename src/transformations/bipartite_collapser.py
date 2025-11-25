@@ -64,12 +64,16 @@ class BipartiteCollapser:
 
             for neighbor in self.graph.neighbors(resource_node):
                 if neighbor != user_node:
-                    # Add edge between user_node and neighbor with edge_data
-                    self.transformed_graph.add_edge(
-                        user_node,
-                        neighbor,
-                        **edge_data
-                    )
+                    if self.transformed_graph.has_node(neighbor) and self.transformed_graph.has_node(user_node) and self.transformed_graph.has_edge(user_node, neighbor):
+                        self.transformed_graph[user_node][neighbor]['weight'] += 1
+                    else:
+                        edge_data['weight'] = 1
+                        self.transformed_graph.add_edge(
+                            user_node,
+                            neighbor,
+                            **edge_data
+                        )
+
 
         return self
     
