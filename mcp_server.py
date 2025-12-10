@@ -2,7 +2,7 @@ import json
 import os
 import asyncio
 from datetime import datetime
-from typing import List, Dict, Any, Optional
+from typing import List, Optional
 
 from src.collector import Collector
 from src.save_strategies import Neo4jSave
@@ -15,7 +15,7 @@ mcp = FastMCP(name="GitHub Graph Explorer", version="1.0.0")
 
 
 # Default Neo4j connection settings
-DEFAULT_NEO4J_URI = "bolt://neo4j:7687"
+DEFAULT_NEO4J_URI = "bolt://localhost:7687"
 DEFAULT_NEO4J_USER = "neo4j"
 DEFAULT_NEO4J_PASSWORD = os.environ.get("NEO4J_PASSWORD", "password")
 
@@ -254,7 +254,7 @@ def _build_neo4j_query(dates: List[str], relationship_types: List[str]) -> str:
 
 # Main entry point
 if __name__ == "__main__":
-    if os.environ.get("MCP_TRANSPORT") == "sse":
-        asyncio.run(mcp.run(host="0.0.0.0", port=8000, transport="sse"))
+    if os.environ.get("MCP_TRANSPORT") == "http":
+        asyncio.run(mcp.run(transport="http", host="0.0.0.0", port=8888))
     else:
         asyncio.run(mcp.run(transport="stdio"))

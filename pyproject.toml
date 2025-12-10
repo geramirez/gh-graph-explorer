@@ -6,7 +6,7 @@ readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
     "aiohttp>=3.11.16",
-    "fastmcp>=2.2.1",
+    "fastmcp>=2.13.3",
     "gql>=3.5.2",
     "jupyter>=1.1.1",
     "matplotlib>=3.10.3",

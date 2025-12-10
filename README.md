@@ -151,7 +151,7 @@ uv run main.py collect --orgs data/orgs.json --output csv --output-file github_d
 
 # Neo4j output
 
-uv run main.py collect --orgs data/orgs.json --since-iso 2025-05-22 --until-iso 2025-06-05 --output neo4j --neo4j-uri bolt://localhost:7687
+uv run main.py collect --orgs data/orgs.json --output neo4j --neo4j-uri bolt://localhost:7687
 
 # Using specific date ranges (recommended for precise control)
 uv run main.py collect --orgs data/orgs.json --since-iso 2025-05-01 --until-iso 2025-05-20 --output csv --output-file github_data.csv
