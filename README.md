@@ -113,6 +113,54 @@ This realization captures why social network analysis should be treated carefull
 
 ### Installation
 
+#### As a Python Library
+
+Install the package from your repository or local directory:
+
+```bash
+pip install gh-graph-explorer
+# or for editable install from local clone:
+pip install -e .
+# or with uv:
+uv pip install -e .
+```
+
+Then import and use the API in your Python code:
+
+```python
+from gh_graph_explorer import collect, analyze, get_edges, bipartite_collapse, __version__
+
+# Example: collect data programmatically
+import asyncio
+
+orgs = [{"username": "octocat", "org": "github"}]
+result = asyncio.run(collect(
+    orgs,
+    since_iso="2025-01-01",
+    until_iso="2025-01-15",
+    output="csv",
+    output_file="data.csv"
+))
+print(result)
+
+# Example: analyze data
+analysis = analyze(source="csv", file="data.csv")
+print(analysis)
+
+# Example: retrieve edges
+edges = get_edges(source="csv", file="data.csv")
+for edge in edges:
+    print(edge)
+```
+
+#### Using the CLI
+
+The package includes a command-line interface. After installation, the `gh-graph-explorer` command will be available:
+
+```bash
+gh-graph-explorer --help
+```
+
 1. Set up your GitHub Personal Access Token
     - Create a `.env` file in the root directory of the project.
     - Add your GitHub token to the `.env` file:
@@ -120,70 +168,87 @@ This realization captures why social network analysis should be treated carefull
       GITHUB_TOKEN=your_github_token_here
       ```
 
-
-
-#### For Local UV/Python Setup
-
-1. Python dependency installation 
-
-    ```bash
-
-    uv sync
-
-    ```
-
 #### For Docker Setup 
-In case you don't have uv installed or prefer to run the project in a container, currently doesn't work with neo4j or jupyter
-1. docker build -f Dockerfile.local -t gh-graph-explorer-local .
-2. chmod +x ./run-local.sh 
-3. Run all the following commands with the ./run-local.sh for example `./run-local.sh collect ...`
+In case you don't have uv installed or prefer to run the project in a container (note: currently doesn't work with neo4j or jupyter):
+1. `docker build -f Dockerfile.local -t gh-graph-explorer-local .`
+2. `chmod +x ./run-local.sh` 
+3. Run all the following commands with `./run-local.sh`, for example: `./run-local.sh collect ...`
 
 
 ### Collecting Data
 
-```
-# Print output (default: last 7 days)
-uv run main.py collect --orgs data/orgs.json --output print
+Use the CLI or library to collect GitHub data:
+
+```bash
+# Print output (default: last 1 day)
+gh-graph-explorer collect --orgs data/orgs.json --output print
 
 # CSV output
-uv run main.py collect --orgs data/orgs.json --output csv --output-file github_data.csv
-
+gh-graph-explorer collect --orgs data/orgs.json --output csv --output-file github_data.csv
 
 # Neo4j output
-
-uv run main.py collect --orgs data/orgs.json --output neo4j --neo4j-uri bolt://localhost:7687
+gh-graph-explorer collect --orgs data/orgs.json --output neo4j --neo4j-uri bolt://localhost:7687
 
 # Using specific date ranges (recommended for precise control)
-uv run main.py collect --orgs data/orgs.json --since-iso 2025-05-01 --until-iso 2025-05-20 --output csv --output-file github_data.csv
+gh-graph-explorer collect --orgs data/orgs.json --since-iso 2025-05-01 --until-iso 2025-05-20 --output csv --output-file github_data.csv
 
 # Using full ISO datetime format
-uv run main.py collect --orgs data/orgs.json --since-iso 2025-05-01T00:00:00 --until-iso 2025-05-20T23:59:59 --output neo4j
+gh-graph-explorer collect --orgs data/orgs.json --since-iso 2025-05-01T00:00:00 --until-iso 2025-05-20T23:59:59 --output neo4j
 ```
-
-
 
 **Note**: The CLI uses `--since-iso` and `--until-iso` to specify the date range for data collection. Both parameters accept either `YYYY-MM-DD` or `YYYY-MM-DDTHH:MM:SS` formats. If not provided, the default is the last day.
 
-### Analyzing Data (New Functionality)
-```
+### Analyzing Data
+
+```bash
 # Analyze from CSV file
-uv run main.py analyze --source csv --file github_data.csv
+gh-graph-explorer analyze --source csv --file github_data.csv
 
 # Analyze from Neo4j
-uv run main.py analyze --source neo4j --neo4j-uri bolt://localhost:7687
+gh-graph-explorer analyze --source neo4j --neo4j-uri bolt://localhost:7687
 ```
 
 The analyzer will use the appropriate loader (CSVLoader or Neo4jLoader) to load the data, create a networkx MultiGraph, and then use the GraphAnalyzer's analyze method to display information about the graph, such as the number of nodes and edges.
 
-If you want to customize the Neo4j query for analysis, you can also use the --neo4j-query parameter:
-```
-uv run main.py analyze --source neo4j --neo4j-query "MATCH (source)-[rel]->(target)  WHERE rel.created_at > \"2025-04-01\" RETURN source.name AS source, target.url AS target, type(rel) AS type, properties(rel) AS properties" --neo4j-uri bolt://localhost:7687
+If you want to customize the Neo4j query for analysis, you can also use the `--neo4j-query` parameter:
+
+```bash
+gh-graph-explorer analyze --source neo4j --neo4j-query "MATCH (source)-[rel]->(target) WHERE rel.created_at > \"2025-04-01\" RETURN source.name AS source, target.url AS target, type(rel) AS type, properties(rel) AS properties" --neo4j-uri bolt://localhost:7687
 ```
 
-### Analyzing Data with jupyter lab + CSVs
+### Retrieving Edges
+
+```bash
+# Get edges from CSV
+gh-graph-explorer get-edges --source csv --file github_data.csv --output print
+
+# Save edges to JSON
+gh-graph-explorer get-edges --source csv --file github_data.csv --output json --output-file edges.json
+```
+
+### Transforming Data
+
+#### Bipartite Graph Collapse
+
+```bash
+# Collapse bipartite graph from CSV
+gh-graph-explorer transform bipartite_collapse --source csv --file github_data.csv --output-file collapsed.csv
+```
+
+Or use the library API:
+
+```python
+from gh_graph_explorer import bipartite_collapse
+
+bipartite_collapse(source="csv", file="github_data.csv", output_file="collapsed.csv")
+```
+
+### Analyzing Data with Jupyter Lab + CSVs
+
 ```bash
 uv run jupyter lab
 ```
+
 There is a template notebook available at `notebooks/graph-explorer-template.ipynb` that you can use to explore the data interactively.
 
 

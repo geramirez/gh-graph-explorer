@@ -1,7 +1,7 @@
 [project]
 name = "gh-graph-explorer"
 version = "0.1.0"
-description = "Add your description here"
+description = "GitHub Work Graph Explorer as a reusable library and CLI"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
@@ -20,3 +20,15 @@ dependencies = [
     "pyvis>=0.3.2",
     "scipy>=1.15.3",
 ]
+
+[project.scripts]
+# Console command: gh-graph-explorer
+gh-graph-explorer = "gh_graph_explorer.cli:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+# Use src layout and include the package
+packages = ["src/gh_graph_explorer"]

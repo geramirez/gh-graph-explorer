@@ -5,6 +5,9 @@ from .edge_factory import EdgeFactory
 from .save_strategies import SaveStrategy, PrintSave, CSVSave, Neo4jSave
 from .collector import Collector
 from .user_work_fetcher import UserWorkFetcher
+from .api import collect, collect_sync, analyze, get_edges, bipartite_collapse
+
+__version__ = "0.1.0"
 
 __all__ = [
     "Loader",
@@ -19,4 +22,10 @@ __all__ = [
     "Neo4jSave",
     "Collector",
     "UserWorkFetcher",
+    "collect",
+    "collect_sync",
+    "analyze",
+    "get_edges",
+    "bipartite_collapse",
+    "__version__",
 ]
