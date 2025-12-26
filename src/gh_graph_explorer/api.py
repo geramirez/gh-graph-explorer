@@ -3,6 +3,7 @@ import asyncio
 import json
 from typing import List, Dict, Any, Optional
 
+from .edge import Edge
 from .collector import Collector
 from .save_strategies import PrintSave, CSVSave, Neo4jSave
 from .graph_analyzer import GraphAnalyzer
@@ -111,21 +112,15 @@ def get_edges(
 
     analyzer = GraphAnalyzer(load_strategy=loader).create()
 
-    edges: List[Dict[str, Any]] = []
-    for u, v, data in analyzer.graph.edges(data=True):
-        edge: Dict[str, Any] = {
-            "source": {"name": u},
-            "target": {"name": v},
-        }
-        # Split attributes across 'type' and 'properties' if present
-        if "type" in data:
-            edge["type"] = data["type"]
-        if data:
-            edge["properties"] = {k: v for k, v in data.items() if k != "type"}
-        edges.append(edge)
-
-    return edges
-
+    for source, target, data in analyzer.graph.edges(data=True):
+        yield Edge(
+            edge_type=data["type"],
+            title=data["title"], 
+            created_at=data["created_at"], 
+            login=source,
+            url=data["url"],
+            parent_url=target,
+        )
 
 def bipartite_collapse(
     *,

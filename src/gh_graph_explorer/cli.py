@@ -4,6 +4,7 @@ import argparse
 import json
 from typing import List, Dict
 
+from .save_strategies import PrintSave, CSVSave, Neo4jSave
 from .api import collect, analyze, get_edges, bipartite_collapse
 
 
@@ -40,7 +41,7 @@ def parse_arguments():
     edges_parser.add_argument("--neo4j-user", type=str, default="neo4j")
     edges_parser.add_argument("--neo4j-password", type=str, default=os.environ.get("NEO4J_PASSWORD", "password"))
     edges_parser.add_argument("--neo4j-query", type=str)
-    edges_parser.add_argument("--output", type=str, choices=["print", "csv", "json"], default="print")
+    edges_parser.add_argument("--output", type=str, choices=["print", "csv", "neo4j"], default="print")
     edges_parser.add_argument("--output-file", type=str)
 
     # transform bipartite collapse
@@ -108,37 +109,21 @@ async def main_async():
             neo4j_password=args.neo4j_password,
             neo4j_query=args.neo4j_query,
         )
+
         if args.output == "csv":
             if not args.output_file:
                 raise ValueError("--output-file must be specified for CSV output")
-            import csv
-            with open(args.output_file, "w", newline="") as f:
-                writer = csv.DictWriter(
-                    f,
-                    fieldnames=["source_name", "source_attrs", "target_name", "target_attrs", "type", "properties"],
-                )
-                writer.writeheader()
-                for edge in edges:
-                    writer.writerow({
-                        "source_name": edge["source"].get("name", ""),
-                        "source_attrs": json.dumps(edge["source"]),
-                        "target_name": edge["target"].get("name", ""),
-                        "target_attrs": json.dumps(edge["target"]),
-                        "type": edge.get("type", ""),
-                        "properties": json.dumps(edge.get("properties", {})),
-                    })
-        elif args.output == "json":
-            if not args.output_file:
-                raise ValueError("--output-file must be specified for JSON output")
-            with open(args.output_file, "w") as f:
-                json.dump(edges, f, default=str)
-        else:
-            for edge in edges:
-                print(f"Source: {edge['source'].get('name')}")
-                print(f"Target: {edge['target'].get('name')}")
-                print(f"Type: {edge.get('type')}")
-                print(f"Properties: {edge.get('properties')}")
-                print("---")
+            save_strategy = CSVSave(filename=args.output_file)
+
+        elif args.output == "print":
+            save_strategy = PrintSave()
+
+        elif args.output == "neo4j":
+            save_strategy = Neo4jSave(uri=args.neo4j_uri, username=args.neo4j_user, password=args.neo4j_password)
+
+        for edge in edges:
+            save_strategy.save(edge)
+
 
     elif args.mode == "transform" and args.transform_type == "bipartite_collapse":
         bipartite_collapse(source=args.source, file=args.file, output_file=args.output_file)

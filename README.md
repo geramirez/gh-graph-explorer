@@ -222,8 +222,9 @@ gh-graph-explorer analyze --source neo4j --neo4j-query "MATCH (source)-[rel]->(t
 # Get edges from CSV
 gh-graph-explorer get-edges --source csv --file github_data.csv --output print
 
-# Save edges to JSON
-gh-graph-explorer get-edges --source csv --file github_data.csv --output json --output-file edges.json
+# Save edges to neo4j
+gh-graph-explorer get-edges --source csv --file github_data.csv --output neo4j --neo4j-uri bolt://localhost:7687
+
 ```
 
 ### Transforming Data
