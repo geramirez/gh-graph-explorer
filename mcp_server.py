@@ -4,10 +4,10 @@ import asyncio
 from datetime import datetime
 from typing import List, Optional
 
-from src.collector import Collector
-from src.save_strategies import Neo4jSave
-from src.graph_analyzer import GraphAnalyzer
-from src.load_strategies import Neo4jLoader
+from gh_graph_explorer.collector import Collector
+from gh_graph_explorer.save_strategies import Neo4jSave
+from gh_graph_explorer.graph_analyzer import GraphAnalyzer
+from gh_graph_explorer.load_strategies import Neo4jLoader
 
 from fastmcp import FastMCP
 

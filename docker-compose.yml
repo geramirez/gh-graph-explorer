@@ -8,7 +8,7 @@ services:
     environment:
       - GITHUB_TOKEN=${GITHUB_TOKEN}
       - NEO4J_PASSWORD=${NEO4J_PASSWORD:-password}
-      - MCP_TRANSPORT=sse
+      - MCP_TRANSPORT=http
 
     ports:
       - "8000:8000"
