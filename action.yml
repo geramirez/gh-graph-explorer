@@ -44,15 +44,14 @@ runs:
       shell: bash
       run: |
         python -m pip install --upgrade pip
-        pip install aiohttp gql networkx neo4j neo4j-driver fastmcp
-        # Try to install the package if possible, but continue if it fails
-        pip install -e . || echo "Could not install package in development mode, proceeding with installed dependencies"
+        # Install the published package (builds from action source when used locally)
+        python -m pip install "${{ github.action_path }}"
 
     - name: Run collection script
       shell: bash
       run: |
         export GITHUB_TOKEN="${{ inputs.github_token }}"
-        COMMAND="python ${{ github.action_path }}/main.py collect --orgs ${{ inputs.orgs_file }} --output csv --output-file ${{ inputs.output_file }}"
+        COMMAND="gh-graph-explorer collect --orgs ${{ inputs.orgs_file }} --output csv --output-file ${{ inputs.output_file }}"
         if [ -n "${{ inputs.since_iso }}" ]; then
           COMMAND="$COMMAND --since-iso ${{ inputs.since_iso }}"
         fi
