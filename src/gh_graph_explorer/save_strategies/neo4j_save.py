@@ -73,11 +73,11 @@ class Neo4jSave(SaveStrategy):
         relationship_type = properties["type"].upper().replace(" ", "_")
 
         source_type = self.get_data_type(edge.source())
-        target_type= self.get_data_type(edge.target())
+        target_type = self.get_data_type(edge.target())
 
         query = (
-            f"MERGE (source:{source_type} {{name: $source_name}}) "
-            f"MERGE (target:{target_type} {{url: $target}}) "
+            f"MERGE (source:{source_type} {{{source_type.identifier()}: $source_name}}) "
+            f"MERGE (target:{target_type} {{{target_type.identifier()}: $target}}) "
             f"MERGE (source)-[r:{relationship_type} {{url: $url}}]->(target) "
             "ON CREATE SET r.title = $title, "
             "r.created_at = $created_at "
@@ -103,9 +103,24 @@ class Neo4jSave(SaveStrategy):
         if self.driver:
             self.driver.close()
 
-    def get_data_type(self, value: str) -> str:
+    def get_data_type(self, value: str) -> "DataType":
         parsed = urlparse(value)
         is_url = parsed.scheme in {"http", "https"} and bool(parsed.netloc)
         if is_url:
-            return "GitHubObject"
+            return GitHubObject()
+        return User()
+
+
+class GitHubObject:
+    def __str__(self) -> str:
+        return "GitHubObject"
+    
+    def identifier(self) -> str:
+        return "url"
+
+class User:
+    def __str__(self) -> str:
         return "User"
+
+    def identifier(self) -> str:
+        return "name"
