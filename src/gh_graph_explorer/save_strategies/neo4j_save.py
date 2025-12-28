@@ -1,3 +1,4 @@
+from urllib.parse import urlparse
 from neo4j import GraphDatabase
 from .base import SaveStrategy
 from ..edge import Edge
@@ -71,18 +72,22 @@ class Neo4jSave(SaveStrategy):
         properties = edge.to_row()
         relationship_type = properties["type"].upper().replace(" ", "_")
 
+        source_type = self.get_data_type(edge.source())
+        target_type= self.get_data_type(edge.target())
+
         query = (
-            "MERGE (source:User {name: $source_name}) "
-            "MERGE (target:GitHubObject {url: $target_url}) "
+            f"MERGE (source:{source_type} {{name: $source_name}}) "
+            f"MERGE (target:{target_type} {{url: $target}}) "
             f"MERGE (source)-[r:{relationship_type} {{url: $url}}]->(target) "
             "ON CREATE SET r.title = $title, "
             "r.created_at = $created_at "
             "RETURN count(r) as edges_count"
         )
+        
         result = tx.run(
             query,
             source_name=edge.source(),
-            target_url=edge.target(),
+            target=edge.target(),
             title=edge.title(),
             created_at=edge.created_at(),
             url=edge.url(),
@@ -97,3 +102,10 @@ class Neo4jSave(SaveStrategy):
         """
         if self.driver:
             self.driver.close()
+
+    def get_data_type(self, value: str) -> str:
+        parsed = urlparse(value)
+        is_url = parsed.scheme in {"http", "https"} and bool(parsed.netloc)
+        if is_url:
+            return "GitHubObject"
+        return "User"
