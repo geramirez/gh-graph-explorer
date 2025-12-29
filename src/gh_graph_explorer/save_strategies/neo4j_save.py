@@ -103,7 +103,7 @@ class Neo4jSave(SaveStrategy):
         if self.driver:
             self.driver.close()
 
-    def get_data_type(self, value: str) -> "DataType":
+    def get_data_type(self, value: str) -> "GitHubObject" | "User":
         parsed = urlparse(value)
         is_url = parsed.scheme in {"http", "https"} and bool(parsed.netloc)
         if is_url:
