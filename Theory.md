@@ -17,11 +17,11 @@ For this discussion, I would like to invite you to put aside the performance man
 
 Social Network Analysis is a field that I hold dear. My academic background is in Sociology, Anthropology, and Arabic. The only reason I code is because I fell into a cross-disciplinary collaboration with some people in the Computer Science department in graduate school. However, that's a story for another time. 
 
-For the last year and a half, during Days of Learning I've been exploring how to leverage GitHub's "participant network" to build and explore my team's social network I have used the statistics and graphs to better understand my team dynamics and have been able to \- to some degree \- measure my performance as a team cultivator. 
+For the last year and a half, during Days of Learning I've been exploring how to leverage GitHub's "participant network" to build and explore my team's social network I have used the statistics and graphs to better understand my team dynamics and have been able to - to some degree - measure my performance as a team cultivator. 
 
-This past year has further convinced me that our organization charts and even the way we think of top performers are ridges, a mechanical projection of a much more complex, organic system \- and understanding this system can help us make better decisions. 
+This past year has further convinced me that our organization charts and even the way we think of top performers are ridges, a mechanical projection of a much more complex, organic system - and understanding this system can help us make better decisions. 
 
-# Methodology \- How does it work?
+# Methodology - How does it work?
 
 I use a modified version of @inkblotty's [my-work-action](https://github.com/inkblotty/my-work-action). Her useful tool builds weekly markdown reports. [My fork](https://github.com/geramirez/my-work-action) converts that data to edge lists for each of the engineers on our team. I then use an [Ipython notebook](https://github.com/geramirez/gh-graph-explorer/blob/main/notebooks/graph-explorer-template.ipynb) to explore the data and export it to [Gephi](https://gephi.org/) for visualizations.  
 
