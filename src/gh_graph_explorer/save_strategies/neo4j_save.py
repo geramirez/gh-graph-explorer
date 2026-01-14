@@ -1,7 +1,9 @@
+
 from urllib.parse import urlparse
 from neo4j import GraphDatabase
 from .base import SaveStrategy
 from ..edge import Edge
+import typing
 
 
 class Neo4jSave(SaveStrategy):
@@ -103,7 +105,7 @@ class Neo4jSave(SaveStrategy):
         if self.driver:
             self.driver.close()
 
-    def get_data_type(self, value: str) -> "GitHubObject" | "User":
+    def get_data_type(self, value: str) -> typing.Union["GitHubObject", "User"]:
         parsed = urlparse(value)
         is_url = parsed.scheme in {"http", "https"} and bool(parsed.netloc)
         if is_url:
