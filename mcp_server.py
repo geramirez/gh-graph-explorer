@@ -126,13 +126,16 @@ async def collect(
 
 @mcp.tool("analyze")
 async def analyze(
-    dates: Optional[List[str]] = None, relationship_types: Optional[List[str]] = None
+    start_date: Optional[str] = None,
+    end_date: Optional[str] = None,
+    relationship_types: Optional[List[str]] = None,
 ) -> dict:
     """
     Analyze GitHub data with optional date filtering and relationship type filtering.
 
     Request parameters:
-        - dates: List of dates to filter by (optional)
+        - start_date: Start date in ISO format, e.g. "2024-01-01" (optional)
+        - end_date: End date in ISO format, e.g. "2024-01-31" (optional)
         - relationship_types: List of relationship types to filter by (optional)
     """
 
@@ -142,7 +145,7 @@ async def analyze(
         return error
 
     # Build Neo4j query based on filters
-    query = _build_neo4j_query(dates, relationship_types)
+    query = _build_neo4j_query(start_date, end_date, relationship_types)
 
     uri, username, password = _get_neo4j_credentials()
 
@@ -160,20 +163,23 @@ async def analyze(
     return {
         "message": "Analysis completed successfully",
         "analysis_results": analysis_results,
-        "filters": {"dates": dates, "relationship_types": relationship_types},
+        "filters": {"start_date": start_date, "end_date": end_date, "relationship_types": relationship_types},
     }
 
 
 @mcp.tool("get_network")
 async def get_network(
-    relationship_types: Optional[List[str]] = None, dates: Optional[List[str]] = None
+    start_date: Optional[str] = None,
+    end_date: Optional[str] = None,
+    relationship_types: Optional[List[str]] = None,
 ) -> dict:
     """
     Get network data as an edge list optimized for LLM parsing.
 
     Request parameters:
+        - start_date: Start date in ISO format, e.g. "2024-01-01" (optional)
+        - end_date: End date in ISO format, e.g. "2024-01-31" (optional)
         - relationship_types: List of relationship types to filter by (optional)
-        - dates: List of dates to filter by (optional)
     """
 
     # Validate relationship types if provided
@@ -182,7 +188,7 @@ async def get_network(
         return error
 
     # Build Neo4j query for edge list
-    query = _build_neo4j_query(dates, relationship_types)
+    query = _build_neo4j_query(start_date, end_date, relationship_types)
 
     uri, username, password = _get_neo4j_credentials()
 
@@ -199,16 +205,19 @@ async def get_network(
         "message": "Network edge list generated successfully",
         "edge_count": len(edges),
         "edge_list": json.dumps(edges, default=str),
-        "filters": {"relationship_types": relationship_types, "dates": dates},
+        "filters": {"start_date": start_date, "end_date": end_date, "relationship_types": relationship_types},
     }
 
 
-def _build_neo4j_query(dates: List[str], relationship_types: List[str]) -> str:
+def _build_neo4j_query(
+    start_date: Optional[str], end_date: Optional[str], relationship_types: List[str]
+) -> str:
     """
     Build a Neo4j query based on filters.
 
     Args:
-        dates: List of dates to filter by (ISO format)
+        start_date: Start date in ISO format (e.g. "2024-01-01")
+        end_date: End date in ISO format (e.g. "2024-01-31")
         relationship_types: List of relationship types to filter by
 
     Returns:
@@ -218,22 +227,11 @@ def _build_neo4j_query(dates: List[str], relationship_types: List[str]) -> str:
     query = "MATCH (source)-[rel]->(target)\n"
     conditions = []
 
-    # Add date filters if provided
-    if dates:
-        date_conditions = []
-        for date in dates:
-            try:
-                # Validate the date format
-                datetime.fromisoformat(date.replace("Z", "+00:00"))
-                date_conditions.append(
-                    f'rel.created_at STARTS WITH "{date.split("T")[0]}"'
-                )
-            except ValueError:
-                # If invalid date format, use it as-is (error will be caught at query execution)
-                date_conditions.append(f'rel.created_at STARTS WITH "{date}"')
-
-        if date_conditions:
-            conditions.append(f'({" OR ".join(date_conditions)})')
+    # Add date range filters if provided
+    if start_date:
+        conditions.append(f'rel.created_at >= "{start_date}"')
+    if end_date:
+        conditions.append(f'rel.created_at <= "{end_date}"')
 
     # Add relationship type filters if provided
     if relationship_types:
