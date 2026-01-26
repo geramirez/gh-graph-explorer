@@ -74,9 +74,7 @@ def parse_orgs_config(orgs_config: str) -> List[Dict[str, str]]:
         raise ValueError(f"Invalid JSON format: {orgs_config}")
 
 
-async def main_async():
-    args = parse_arguments()
-
+async def main_async(args):
     if args.mode == "collect":
         orgs = parse_orgs_config(args.orgs)
         result = await collect(
@@ -138,14 +136,6 @@ async def main_async():
     elif args.mode == "transform" and args.transform_type == "bipartite_collapse":
         bipartite_collapse(source=args.source, file=args.file, output_file=args.output_file)
 
-    elif args.mode == "mcp-server":
-        try:
-            from .mcp_server import run_server
-        except ImportError as e:
-            print("MCP support requires additional dependencies.")
-            print("Install with: pip install gh-graph-explorer[mcp]")
-            return 1
-        run_server(transport=args.transport, host=args.host, port=args.port)
     else:
         print("No mode specified. Use 'collect', 'analyze', 'get-edges', 'transform bipartite_collapse', or 'mcp-server'")
         return 1
@@ -154,7 +144,21 @@ async def main_async():
 
 
 def main():
-    asyncio.run(main_async())
+    # Parse args first to check for mcp-server mode
+    # which needs to run outside of asyncio.run()
+    args = parse_arguments()
+
+    if args.mode == "mcp-server":
+        try:
+            from .mcp_server import run_server
+        except ImportError:
+            print("MCP support requires additional dependencies.")
+            print("Install with: pip install gh-graph-explorer[mcp]")
+            return 1
+        run_server(transport=args.transport, host=args.host, port=args.port)
+        return 0
+
+    asyncio.run(main_async(args))
 
 
 if __name__ == "__main__":

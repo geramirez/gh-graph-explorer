@@ -1,7 +1,5 @@
 import json
 import os
-import asyncio
-from datetime import datetime
 from typing import List, Optional
 
 from .collector import Collector
@@ -246,8 +244,8 @@ def _build_neo4j_query(
     if conditions:
         query += f'WHERE {" AND ".join(conditions)}\n'
 
-    # Complete the query
-    query += "RETURN source.name AS source, target.url AS target, \n"
+    # Complete the query - use COALESCE to handle both people-to-people and bipartite networks
+    query += "RETURN source.name AS source, COALESCE(target.url, target.name) AS target, \n"
     query += "       TYPE(rel) AS type, properties(rel) AS properties"
 
     return query
@@ -256,14 +254,12 @@ def _build_neo4j_query(
 def run_server(transport: str = "stdio", host: str = "0.0.0.0", port: int = 8888):
     """Run the MCP server with the specified transport."""
     if transport == "http":
-        asyncio.run(mcp.run(transport="http", host=host, port=port))
+        mcp.run(transport="http", host=host, port=port)
     else:
-        asyncio.run(mcp.run(transport="stdio"))
+        mcp.run(transport="stdio")
 
 
 # Main entry point
 if __name__ == "__main__":
-    if os.environ.get("MCP_TRANSPORT") == "http":
-        run_server(transport="http")
-    else:
-        run_server(transport="stdio")
+    transport = "http" if os.environ.get("MCP_TRANSPORT") == "http" else "stdio"
+    run_server(transport=transport)
