@@ -5,9 +5,9 @@ from datetime import datetime
 from typing import List, Optional
 
 from gh_graph_explorer.collector import Collector
-from gh_graph_explorer.save_strategies import Neo4jSave
+from gh_graph_explorer.save_strategies import get_neo4j_save
 from gh_graph_explorer.graph_analyzer import GraphAnalyzer
-from gh_graph_explorer.load_strategies import Neo4jLoader
+from gh_graph_explorer.load_strategies import get_neo4j_loader
 
 from fastmcp import FastMCP
 
@@ -105,6 +105,7 @@ async def collect(
     uri, username, password = _get_neo4j_credentials()
 
     # Create Neo4j save strategy (default for MCP server)
+    Neo4jSave = get_neo4j_save()
     save_strategy = Neo4jSave(uri=uri, username=username, password=password)
 
     # Create collector with Neo4j save strategy
@@ -146,6 +147,7 @@ async def analyze(
     uri, username, password = _get_neo4j_credentials()
 
     # Create Neo4j loader with custom query
+    Neo4jLoader = get_neo4j_loader()
     loader = Neo4jLoader(uri=uri, username=username, password=password, query=query)
 
     # Create and run analyzer
@@ -185,6 +187,7 @@ async def get_network(
     uri, username, password = _get_neo4j_credentials()
 
     # Create Neo4j loader with custom query
+    Neo4jLoader = get_neo4j_loader()
     loader = Neo4jLoader(uri=uri, username=username, password=password, query=query)
 
     # Create graph analyzer and get the edge list directly from it
