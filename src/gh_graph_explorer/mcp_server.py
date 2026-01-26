@@ -127,6 +127,7 @@ async def analyze(
     start_date: Optional[str] = None,
     end_date: Optional[str] = None,
     relationship_types: Optional[List[str]] = None,
+    users: Optional[List[str]] = None,
 ) -> dict:
     """
     Analyze GitHub data with optional date filtering and relationship type filtering.
@@ -135,6 +136,7 @@ async def analyze(
         - start_date: Start date in ISO format, e.g. "2024-01-01" (optional)
         - end_date: End date in ISO format, e.g. "2024-01-31" (optional)
         - relationship_types: List of relationship types to filter by (optional)
+        - users: List of GitHub usernames to filter by (optional)
     """
 
     # Validate relationship types if provided
@@ -143,7 +145,7 @@ async def analyze(
         return error
 
     # Build Neo4j query based on filters
-    query = _build_neo4j_query(start_date, end_date, relationship_types)
+    query = _build_neo4j_query(start_date, end_date, relationship_types, users)
 
     uri, username, password = _get_neo4j_credentials()
 
@@ -161,7 +163,7 @@ async def analyze(
     return {
         "message": "Analysis completed successfully",
         "analysis_results": analysis_results,
-        "filters": {"start_date": start_date, "end_date": end_date, "relationship_types": relationship_types},
+        "filters": {"start_date": start_date, "end_date": end_date, "relationship_types": relationship_types, "users": users},
     }
 
 
@@ -170,6 +172,7 @@ async def get_network(
     start_date: Optional[str] = None,
     end_date: Optional[str] = None,
     relationship_types: Optional[List[str]] = None,
+    users: Optional[List[str]] = None,
 ) -> dict:
     """
     Get network data as an edge list optimized for LLM parsing.
@@ -178,6 +181,7 @@ async def get_network(
         - start_date: Start date in ISO format, e.g. "2024-01-01" (optional)
         - end_date: End date in ISO format, e.g. "2024-01-31" (optional)
         - relationship_types: List of relationship types to filter by (optional)
+        - users: List of GitHub usernames to filter by (optional)
     """
 
     # Validate relationship types if provided
@@ -186,7 +190,7 @@ async def get_network(
         return error
 
     # Build Neo4j query for edge list
-    query = _build_neo4j_query(start_date, end_date, relationship_types)
+    query = _build_neo4j_query(start_date, end_date, relationship_types, users)
 
     uri, username, password = _get_neo4j_credentials()
 
@@ -203,12 +207,15 @@ async def get_network(
         "message": "Network edge list generated successfully",
         "edge_count": len(edges),
         "edge_list": json.dumps(edges, default=str),
-        "filters": {"start_date": start_date, "end_date": end_date, "relationship_types": relationship_types},
+        "filters": {"start_date": start_date, "end_date": end_date, "relationship_types": relationship_types, "users": users},
     }
 
 
 def _build_neo4j_query(
-    start_date: Optional[str], end_date: Optional[str], relationship_types: List[str]
+    start_date: Optional[str],
+    end_date: Optional[str],
+    relationship_types: List[str],
+    users: Optional[List[str]] = None,
 ) -> str:
     """
     Build a Neo4j query based on filters.
@@ -217,6 +224,7 @@ def _build_neo4j_query(
         start_date: Start date in ISO format (e.g. "2024-01-01")
         end_date: End date in ISO format (e.g. "2024-01-31")
         relationship_types: List of relationship types to filter by
+        users: List of GitHub usernames to filter by (optional)
 
     Returns:
         A Cypher query string
@@ -239,6 +247,11 @@ def _build_neo4j_query(
 
         if type_conditions:
             conditions.append(f'({" OR ".join(type_conditions)})')
+
+    # Add users filter if provided
+    if users:
+        users_list = ', '.join(f'"{u}"' for u in users)
+        conditions.append(f'(source.name IN [{users_list}] OR target.name IN [{users_list}])')
 
     # Add WHERE clause if there are conditions
     if conditions:
