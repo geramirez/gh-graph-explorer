@@ -4,10 +4,10 @@ import asyncio
 from datetime import datetime
 from typing import List, Optional
 
-from gh_graph_explorer.collector import Collector
-from gh_graph_explorer.save_strategies import get_neo4j_save
-from gh_graph_explorer.graph_analyzer import GraphAnalyzer
-from gh_graph_explorer.load_strategies import get_neo4j_loader
+from .collector import Collector
+from .save_strategies import get_neo4j_save
+from .graph_analyzer import GraphAnalyzer
+from .load_strategies import get_neo4j_loader
 
 from fastmcp import FastMCP
 
@@ -253,9 +253,17 @@ def _build_neo4j_query(
     return query
 
 
+def run_server(transport: str = "stdio", host: str = "0.0.0.0", port: int = 8888):
+    """Run the MCP server with the specified transport."""
+    if transport == "http":
+        asyncio.run(mcp.run(transport="http", host=host, port=port))
+    else:
+        asyncio.run(mcp.run(transport="stdio"))
+
+
 # Main entry point
 if __name__ == "__main__":
     if os.environ.get("MCP_TRANSPORT") == "http":
-        asyncio.run(mcp.run(transport="http", host="0.0.0.0", port=8888))
+        run_server(transport="http")
     else:
-        asyncio.run(mcp.run(transport="stdio"))
+        run_server(transport="stdio")

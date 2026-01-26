@@ -13,7 +13,7 @@ For background on the theory and application of Social Network Analysis to engin
 | [Collecting Data](#collecting-data) | Data collection commands |
 | [Analyzing Data](#analyzing-data) | Data analysis commands |
 | [Using the GitHub Action](#using-the-github-action) | Automating data collection |
-| [Setup with Claude Desktop](#setup-with-claude-desktop) | Example configuration |
+| [MCP Server](#mcp-server) | MCP server setup for Claude Desktop |
 | [Useful Queries](#useful-queries) | Example Neo4j queries |
 
 ## Usage
@@ -250,28 +250,59 @@ The GitHub Action accepts the following inputs:
 
 > **Note:** For CLI usage, use `--since-iso` and `--until-iso` as shown above. The `days` parameter is only relevant for the GitHub Action workflow.
 
-### Setup with Claude Desktop
+### MCP Server
+
+The MCP (Model Context Protocol) server allows Claude Desktop and other MCP clients to interact with your GitHub graph data.
+
+#### Installation
+
+```bash
+pip install gh-graph-explorer[mcp]
+```
+
+#### Running the MCP Server
+
+```bash
+# Run with stdio transport (default, for Claude Desktop)
+gh-graph-explorer mcp-server
+
+# Run with HTTP transport
+gh-graph-explorer mcp-server --transport http --host 0.0.0.0 --port 8888
+```
+
+#### Available MCP Tools
+
+The MCP server provides three tools:
+
+- **collect** - Collect GitHub data for a user/org and store in Neo4j
+- **analyze** - Analyze the graph with optional date range and relationship type filters
+- **get_network** - Get network edges as a list for LLM parsing
+
+#### Setup with Claude Desktop
+
+Add the following to your Claude Desktop configuration file:
+
+**macOS**: `~/Library/Application Support/Claude/claude_desktop_config.json`
+**Windows**: `%APPDATA%\Claude\claude_desktop_config.json`
+
 ```json
 {
     "mcpServers": {
         "gh-graph-explorer": {
-            "command": "uv",
-            "args": [
-                "--directory",
-                "path to directory",
-                "run",
-                "mcp_server.py"
-            ],
+            "command": "gh-graph-explorer",
+            "args": ["mcp-server"],
             "env": {
-                "GITHUB_TOKEN": "*****",
+                "GITHUB_TOKEN": "your_github_token",
                 "NEO4J_PASSWORD": "password",
-                "NEO4J_USERNAME": "neo4j",
+                "NEO4J_USER": "neo4j",
                 "NEO4J_URI": "bolt://localhost:7687"
             }
         }
-      }
+    }
 }
 ```
+
+**Note**: Make sure `gh-graph-explorer` is installed in a location that's in your PATH, or use the full path to the executable.
 
 ### Useful queries 
 Filter by date

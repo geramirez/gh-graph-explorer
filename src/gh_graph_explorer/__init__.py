@@ -9,6 +9,27 @@ from .api import collect, collect_sync, analyze, get_edges, bipartite_collapse
 
 __version__ = "0.1.0"
 
+
+def get_mcp_server():
+    """
+    Get the MCP server instance.
+
+    Returns:
+        The FastMCP server instance.
+
+    Raises:
+        ImportError: If fastmcp is not installed.
+    """
+    try:
+        from .mcp_server import mcp
+        return mcp
+    except ImportError:
+        raise ImportError(
+            "MCP support requires the 'fastmcp' package. "
+            "Install with: pip install gh-graph-explorer[mcp]"
+        )
+
+
 __all__ = [
     "Loader",
     "CSVLoader",
@@ -27,5 +48,6 @@ __all__ = [
     "analyze",
     "get_edges",
     "bipartite_collapse",
+    "get_mcp_server",
     "__version__",
 ]

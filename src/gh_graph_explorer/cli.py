@@ -52,6 +52,15 @@ def parse_arguments():
     bipartite_parser.add_argument("--file", type=str, required=True)
     bipartite_parser.add_argument("--output-file", type=str, required=True)
 
+    # mcp-server
+    mcp_parser = subparsers.add_parser("mcp-server", help="Start the MCP server")
+    mcp_parser.add_argument("--transport", choices=["stdio", "http"], default="stdio",
+                           help="Transport protocol (default: stdio)")
+    mcp_parser.add_argument("--host", default="0.0.0.0",
+                           help="Host for HTTP transport (default: 0.0.0.0)")
+    mcp_parser.add_argument("--port", type=int, default=8888,
+                           help="Port for HTTP transport (default: 8888)")
+
     return parser.parse_args()
 
 
@@ -128,8 +137,17 @@ async def main_async():
 
     elif args.mode == "transform" and args.transform_type == "bipartite_collapse":
         bipartite_collapse(source=args.source, file=args.file, output_file=args.output_file)
+
+    elif args.mode == "mcp-server":
+        try:
+            from .mcp_server import run_server
+        except ImportError as e:
+            print("MCP support requires additional dependencies.")
+            print("Install with: pip install gh-graph-explorer[mcp]")
+            return 1
+        run_server(transport=args.transport, host=args.host, port=args.port)
     else:
-        print("No mode specified. Use 'collect', 'analyze', 'get-edges', or 'transform bipartite_collapse'")
+        print("No mode specified. Use 'collect', 'analyze', 'get-edges', 'transform bipartite_collapse', or 'mcp-server'")
         return 1
 
     return 0
