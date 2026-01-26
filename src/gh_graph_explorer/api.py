@@ -4,9 +4,9 @@ from typing import List, Dict, Any, Optional
 
 from .edge import Edge
 from .collector import Collector
-from .save_strategies import PrintSave, CSVSave, Neo4jSave
+from .save_strategies import PrintSave, CSVSave, get_neo4j_save
 from .graph_analyzer import GraphAnalyzer
-from .load_strategies import CSVLoader, Neo4jLoader
+from .load_strategies import CSVLoader, get_neo4j_loader
 from .transformations.bipartite_collapser import BipartiteCollapser
 
 
@@ -34,6 +34,7 @@ async def collect(
     if output == "csv":
         save_strategy = CSVSave(filename=output_file)
     elif output == "neo4j":
+        Neo4jSave = get_neo4j_save()
         save_strategy = Neo4jSave(uri=neo4j_uri, username=neo4j_user, password=neo4j_password)
     else:
         save_strategy = PrintSave()
@@ -67,6 +68,7 @@ def analyze(
             raise ValueError("file must be provided for csv source")
         loader = CSVLoader(filepath=file)
     elif source == "neo4j":
+        Neo4jLoader = get_neo4j_loader()
         loader = Neo4jLoader(
             uri=neo4j_uri,
             username=neo4j_user,
@@ -100,6 +102,7 @@ def get_edges(
             raise ValueError("file must be provided for csv source")
         loader = CSVLoader(filepath=file)
     elif source == "neo4j":
+        Neo4jLoader = get_neo4j_loader()
         loader = Neo4jLoader(
             uri=neo4j_uri,
             username=neo4j_user,

@@ -30,7 +30,18 @@ For background on the theory and application of Social Network Analysis to engin
 Install the package from your repository or local directory:
 
 ```bash
+# Standard install (CSV support only)
 pip install gh-graph-explorer
+
+# With Neo4j support
+pip install gh-graph-explorer[neo4j]
+
+# With MCP server support (for Claude Desktop)
+pip install gh-graph-explorer[mcp]
+
+# For development (includes jupyter, matplotlib, etc.)
+pip install gh-graph-explorer[dev]
+
 # or for editable install from local clone:
 pip install -e .
 # or with uv:
@@ -156,10 +167,14 @@ from gh_graph_explorer import bipartite_collapse
 bipartite_collapse(source="csv", file="github_data.csv", output_file="collapsed.csv")
 ```
 
-### Analyzing Data with Jupyter Lab + CSVs
+### Analyzing Data with Jupyter Lab + CSVs (Development)
+
+For interactive data exploration with Jupyter notebooks, install with the dev extras:
 
 ```bash
-uv run jupyter lab
+pip install gh-graph-explorer[dev]
+# Then run:
+jupyter lab
 ```
 
 There is a template notebook available at `notebooks/graph-explorer-template.ipynb` that you can use to explore the data interactively.

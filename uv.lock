@@ -1,5 +1,5 @@
 version = 1
-revision = 2
+revision = 3
 requires-python = ">=3.12"
 
 [[package]]
@@ -747,38 +747,47 @@ version = "0.1.0"
 source = { editable = "." }
 dependencies = [
     { name = "aiohttp" },
-    { name = "fastmcp" },
     { name = "gql" },
+    { name = "networkx" },
+    { name = "python-dotenv" },
+]
+
+[package.optional-dependencies]
+dev = [
     { name = "jupyter" },
     { name = "matplotlib" },
-    { name = "neo4j" },
-    { name = "neo4j-driver" },
-    { name = "networkx" },
     { name = "numpy" },
     { name = "pandas" },
     { name = "pyperclip" },
-    { name = "python-dotenv" },
     { name = "pyvis" },
     { name = "scipy" },
+]
+mcp = [
+    { name = "fastmcp" },
+    { name = "neo4j" },
+]
+neo4j = [
+    { name = "neo4j" },
 ]
 
 [package.metadata]
 requires-dist = [
     { name = "aiohttp", specifier = ">=3.11.16" },
-    { name = "fastmcp", specifier = ">=2.13.3" },
+    { name = "fastmcp", marker = "extra == 'mcp'", specifier = ">=2.13.3" },
     { name = "gql", specifier = ">=3.5.2" },
-    { name = "jupyter", specifier = ">=1.1.1" },
-    { name = "matplotlib", specifier = ">=3.10.3" },
-    { name = "neo4j", specifier = ">=5.18.0" },
-    { name = "neo4j-driver" },
+    { name = "jupyter", marker = "extra == 'dev'", specifier = ">=1.1.1" },
+    { name = "matplotlib", marker = "extra == 'dev'", specifier = ">=3.10.3" },
+    { name = "neo4j", marker = "extra == 'mcp'", specifier = ">=5.18.0" },
+    { name = "neo4j", marker = "extra == 'neo4j'", specifier = ">=5.18.0" },
     { name = "networkx", specifier = ">=3.1.0" },
-    { name = "numpy", specifier = ">=2.3.0" },
-    { name = "pandas", specifier = ">=2.3.0" },
-    { name = "pyperclip", specifier = ">=1.9.0" },
+    { name = "numpy", marker = "extra == 'dev'", specifier = ">=2.3.0" },
+    { name = "pandas", marker = "extra == 'dev'", specifier = ">=2.3.0" },
+    { name = "pyperclip", marker = "extra == 'dev'", specifier = ">=1.9.0" },
     { name = "python-dotenv", specifier = ">=1.1.0" },
-    { name = "pyvis", specifier = ">=0.3.2" },
-    { name = "scipy", specifier = ">=1.15.3" },
+    { name = "pyvis", marker = "extra == 'dev'", specifier = ">=0.3.2" },
+    { name = "scipy", marker = "extra == 'dev'", specifier = ">=1.15.3" },
 ]
+provides-extras = ["neo4j", "mcp", "dev"]
 
 [[package]]
 name = "gql"
@@ -1567,18 +1576,6 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/4b/20/733dac16f7cedc80b23093415822c9763302519cba0e7c8bcdb5c01fc512/neo4j-5.28.1.tar.gz", hash = "sha256:ae8e37a1d895099062c75bc359b2cce62099baac7be768d0eba7180c1298e214", size = 231094, upload-time = "2025-02-10T08:36:22.566Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/6a/57/94225fe5e9dabdc0ff60c88cbfcedf11277f4b34e7ab1373d3e62dbdd207/neo4j-5.28.1-py3-none-any.whl", hash = "sha256:6755ef9e5f4e14b403aef1138fb6315b120631a0075c138b5ddb2a06b87b09fd", size = 312258, upload-time = "2025-02-10T08:36:16.209Z" },
-]
-
-[[package]]
-name = "neo4j-driver"
-version = "5.28.1"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "pytz" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/ce/bb/c3bc07953c3ae1fe37526ffb727e4dc3f1129aac818abe9923d23c67be88/neo4j_driver-5.28.1.tar.gz", hash = "sha256:1fae3968ac0546df1ad90575bc0531a0dfac3db140b9cb03349218229ea157e2", size = 231246, upload-time = "2025-02-10T08:36:20.289Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/5a/4e/2367baab52e0d3ac05c07092d196bbc917cdd4948ab5fedd17ac60d5189c/neo4j_driver-5.28.1-py3-none-any.whl", hash = "sha256:531a9f3e34a2a560fe77779477953169eef6dbd1740008c0a04cc459ba53734a", size = 312482, upload-time = "2025-02-10T08:36:14.297Z" },
 ]
 
 [[package]]

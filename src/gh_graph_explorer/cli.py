@@ -4,7 +4,7 @@ import argparse
 import json
 from typing import List, Dict
 
-from .save_strategies import PrintSave, CSVSave, Neo4jSave
+from .save_strategies import PrintSave, CSVSave, get_neo4j_save
 from .api import collect, analyze, get_edges, bipartite_collapse
 
 
@@ -119,6 +119,7 @@ async def main_async():
             save_strategy = PrintSave()
 
         elif args.output == "neo4j":
+            Neo4jSave = get_neo4j_save()
             save_strategy = Neo4jSave(uri=args.neo4j_uri, username=args.neo4j_user, password=args.neo4j_password)
 
         for edge in edges:
