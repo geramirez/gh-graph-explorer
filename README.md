@@ -10,22 +10,27 @@ For background on the theory and application of Social Network Analysis to engin
 |---------|-------------|
 | [Dependencies](#dependencies) | Required tools and libraries |
 | [Installation](#installation) | Setup instructions |
-| [Collecting Data](#collecting-data) | Data collection commands |
-| [Analyzing Data](#analyzing-data) | Data analysis commands |
-| [Using the GitHub Action](#using-the-github-action) | Automating data collection |
-| [MCP Server](#mcp-server) | MCP server setup for Claude Desktop |
-| [Useful Queries](#useful-queries) | Example Neo4j queries |
+| [Usage](#usage) | Overview of usage options |
+| &nbsp;&nbsp;[As a Python Library](#as-a-python-library) | Programmatic usage examples |
+| &nbsp;&nbsp;[Using the CLI](#using-the-cli) | Command-line interface setup |
+| &nbsp;&nbsp;[For Docker Setup](#for-docker-setup) | Running in a container |
+| &nbsp;&nbsp;[Collecting Data](#collecting-data) | Data collection commands |
+| &nbsp;&nbsp;[Analyzing Data](#analyzing-data) | Data analysis commands |
+| &nbsp;&nbsp;[Retrieving Edges](#retrieving-edges) | Edge retrieval commands |
+| &nbsp;&nbsp;[Transforming Data](#transforming-data) | Graph transformation tools |
+| &nbsp;&nbsp;[Analyzing Data with Jupyter Lab + CSVs (Development)](#analyzing-data-with-jupyter-lab--csvs-development) | Interactive notebook exploration |
+| &nbsp;&nbsp;[Using the GitHub Action](#using-the-github-action) | Automating data collection |
+| &nbsp;&nbsp;[MCP Server](#mcp-server) | MCP server setup for Claude Desktop |
+| &nbsp;&nbsp;[Useful queries](#useful-queries) | Example Neo4j queries |
+| &nbsp;&nbsp;[Bipartite Graph Collapse Transformation](#bipartite-graph-collapse-transformation) | Collapsing bipartite graphs |
 
-## Usage
 
-### Dependencies
+## Dependencies
 - [uv](https://github.com/astral-sh/uv) - for packaging and running the project
 - [GitHub Personal Access Token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token) - with Discussions, Issues, Pull requests scopes for accessing data.
 - [docker](https://www.docker.com/) - for running the Neo4j database (optional, but recommended for Neo4j output)
 
-### Installation
-
-#### As a Python Library
+## Installation
 
 Install the package from your repository or local directory:
 
@@ -48,7 +53,9 @@ pip install -e .
 uv pip install -e .
 ```
 
-Then import and use the API in your Python code:
+## Usage
+
+### As a Python Library
 
 ```python
 from gh_graph_explorer import collect, analyze, get_edges, bipartite_collapse, __version__
@@ -76,7 +83,7 @@ for edge in edges:
     print(edge)
 ```
 
-#### Using the CLI
+### Using the CLI
 
 The package includes a command-line interface. After installation, the `gh-graph-explorer` command will be available:
 
@@ -91,7 +98,7 @@ gh-graph-explorer --help
       GITHUB_TOKEN=your_github_token_here
       ```
 
-#### For Docker Setup 
+### For Docker Setup 
 In case you don't have uv installed or prefer to run the project in a container (note: currently doesn't work with neo4j or jupyter):
 1. `docker build -f Dockerfile.local -t gh-graph-explorer-local .`
 2. `chmod +x ./run-local.sh` 
