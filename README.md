@@ -10,6 +10,7 @@ For background on the theory and application of Social Network Analysis to engin
 |---------|-------------|
 | [Dependencies](#dependencies) | Required tools and libraries |
 | [Installation](#installation) | Setup instructions |
+| [Quick Start](#quick-start) | Get up and running in minutes |
 | [Usage](#usage) | Overview of usage options |
 | &nbsp;&nbsp;[As a Python Library](#as-a-python-library) | Programmatic usage examples |
 | &nbsp;&nbsp;[Using the CLI](#using-the-cli) | Command-line interface setup |
@@ -52,6 +53,39 @@ pip install -e .
 # or with uv:
 uv pip install -e .
 ```
+
+## Quick Start
+
+1. **Set your GitHub token**
+
+   ```bash
+   export GITHUB_TOKEN=your_github_token_here
+   ```
+
+2. **Create an `orgs.json` file** with the users/orgs you want to collect data for:
+
+   ```json
+   [
+     {
+       "username": "octocat",
+       "org": "github"
+     }
+   ]
+   ```
+
+3. **Collect data** from GitHub into a CSV:
+
+   ```bash
+   gh-graph-explorer collect --orgs orgs.json --since-iso 2025-01-01 --until-iso 2025-01-31 --output csv --output-file github_data.csv
+   ```
+
+4. **Analyze the graph:**
+
+   ```bash
+   gh-graph-explorer analyze --source csv --file github_data.csv
+   ```
+
+That's it! For more options see the [Usage](#usage) section below.
 
 ## Usage
 
